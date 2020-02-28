@@ -1,0 +1,43 @@
+jobs:
+  fmt:
+    function: fmt:main
+    targets:
+      - all
+
+  yenv:
+    function: yenv:main
+    context:
+      yenv-file: ../environment.yml
+      env-targets:
+        - {{name}}
+
+      {% if package %}
+  clean:
+    function: clean:main
+    context:
+      clean_dirs:
+        - build
+        - dist
+        - {{name}}.egg-info
+
+  pypi-upload:
+    function: pypi_upload:main
+    context:
+      release_type: patch
+      twine_username: {{twine_username}}
+
+  {% endif %}
+  {% if webapp %}
+  {% endif %}
+
+projects:
+  {% if package %}
+  {% endif %}
+  {% if webapp %}
+  {% endif %}
+
+routines:
+  {% if package %}
+  {% endif %}
+  {% if webapp %}
+  {% endif %}

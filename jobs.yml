@@ -1,0 +1,31 @@
+jobs:
+  fmt:
+    function: fmt:main
+    targets:
+      - all
+
+  yenv:
+    function: yenv:main
+    context:
+      yenv-file: ../environment.yml
+      env-targets:
+        - templater
+
+  clean:
+    function: clean:main
+    context:
+      clean_dirs:
+        - build
+        - dist
+        - templater.egg-info
+
+  pypi-upload:
+    function: pypi_upload:main
+    context:
+      release_type: patch
+      twine_username: joellefkowitz
+
+
+projects:
+
+routines:

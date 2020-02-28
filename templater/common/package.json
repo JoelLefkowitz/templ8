@@ -1,0 +1,15 @@
+{
+  "name": "{{name}}",
+  "version": "{{version}}",
+  "description": "{{description}}",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "{{author}}",
+  "license": "ISC",
+    "devDependencies": {
+    "dotenv": "^8.2.0",
+    "yenv": "^2.1.1"
+  }
+}
