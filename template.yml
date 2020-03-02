@@ -1,0 +1,15 @@
+common: True
+package: True
+
+name: templ8
+version: 0.3.0
+description: Configurable, intelligent project template generator
+
+author: Joel Lefkowitz
+author_email: joellefkowitz@hotmail.com
+author_github: JoelLefkowitz
+github_url: https://github.com/JoelLefkowitz/temp8
+twine_username: joellefkowitz 
+
+
+

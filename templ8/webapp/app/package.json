@@ -1,0 +1,12 @@
+{
+  "name": "{{name}}app",
+  "version": "{{version}}",
+  "description": "{{description}}",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "{{author}}",
+  "license": "ISC"
+  }
+}

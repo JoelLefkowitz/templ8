@@ -28,16 +28,46 @@ jobs:
 
   {% endif %}
   {% if webapp %}
+  build:
+    function: build:main
+    targets: 
+      - {{name}}app
+      - {{name}}server
+
+  deploy:
+    function: deploy:main
+    context:
+      deploy_target: {{deploy_url}}
+      remote_user: root
+      docker_compose_file: docker-compose.yml
+      version: {{version}}
+      image_names:
+        - {{name}}app
+        - {{name}}server
   {% endif %}
 
 projects:
   {% if package %}
+  {{name}}:
+    path: ../{{name}}
   {% endif %}
   {% if webapp %}
+  {{name}}app:
+    path: ../{{name}}app
+  {{name}}server:
+    path: ../{{name}}server
   {% endif %}
 
 routines:
   {% if package %}
+  release:
+    - fmt
+    - clean
+    - pypi_upload
   {% endif %}
   {% if webapp %}
+  deploy:
+    - fmt
+    - build
+    - deploy
   {% endif %}

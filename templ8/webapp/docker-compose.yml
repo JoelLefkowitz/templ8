@@ -1,0 +1,19 @@
+version: '3.3'
+
+  services:
+    {{name}}app:
+      image: {{name}}app:{{version}}
+      ports: 
+        - 443:443
+
+    {{name}}server:
+      image: {{name}}server:{{version}}
+      depends_on: 
+        - database
+        - cache
+
+    database:
+      image: postgres:latest
+
+    cache:
+      image: memchaced:latest

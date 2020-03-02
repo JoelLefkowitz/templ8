@@ -1,10 +1,10 @@
 from os.path import abspath, dirname, join
 
-project = "templater"
+project = "templ8"
 copyright = "Joel Lefkowitz"
 author = "Joel Lefkowitz"
 
-master_doc = "templater/docs/modules"
+master_doc = "templ8/docs/modules"
 output_dir = dirname(abspath(__file__))
 source_dir = dirname(abspath(join(__file__, "..")))
 

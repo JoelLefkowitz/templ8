@@ -1,6 +1,6 @@
-from exceptions import MissingConfig
-from dataclasses import dataclass
-from typing import List, Tuple, Any
+from .exceptions import MissingConfig
+from dataclasses import dataclass, field
+from typing import List, Tuple, Any, Callable, Dict
 
 
 @dataclass
@@ -18,9 +18,20 @@ class Context:
 
 
 @dataclass
+class Alias:
+    context: Context
+    formatter: Callable[[Any], str] = lambda x: str(x)
+
+    def resolve(self, config: dict) -> str:
+        name, value = self.context.emit_from_config(config)
+        return self.formatter(value)
+
+
+@dataclass
 class Spec:
     root_name: str
     context_set: List[Context]
+    folder_aliases: Dict[str, Alias] = field(default_factory=dict)
 
     def check_condition(self, config: dict) -> bool:
         return (

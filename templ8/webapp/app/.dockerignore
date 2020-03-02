@@ -1,0 +1,45 @@
+# Builds
+build/
+dist/
+
+# Cache
+__pycache__/
+.cache
+.coverage
+.coverage.*
+.dmypy.json
+.DS_Store
+.hypothesis/
+.mypy_cache/
+.nox/
+.pytest_cache/
+.tox/
+*.cover
+*.py[cod]
+*$py.class
+coverage.xml
+dmypy.json
+htmlcov/
+nosetests.xml
+Thumbs.db
+
+# Environmnet & dependencies
+.env
+.venv
+env.bak/
+env/
+ENV/
+node_modules
+venv/
+venv.bak/
+
+# IDE
+.c9/
+.classpath
+.history/*
+.project
+.settings/
+.vscode/*
+*.launch
+*.sublime-workspace
+/.idea

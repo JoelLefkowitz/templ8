@@ -1,5 +1,7 @@
-# templater
+# templ8
+
 Configurable, intelligent project template generator
+
 ## Status
 
 | Source  | Shields  |
@@ -9,38 +11,39 @@ Configurable, intelligent project template generator
 | Downloads  | ![pypi_downloads][pypi_downloads] |
 | Raised  | [![issues][issues]][issues_link] [![pulls][pulls]][pulls_link]  |
 
-[license]: https://img.shields.io/github/license/joellefkowitz/templater
+[license]: https://img.shields.io/github/license/joellefkowitz/templ8
 
-[release]: https://img.shields.io/github/v/tag/joellefkowitz/templater
+[release]: https://img.shields.io/github/v/tag/joellefkowitz/templ8
 
-[pypi]: https://img.shields.io/pypi/v/templater (PyPi)
-[pypi_link]: https://pypi.org/project/templater
+[pypi]: https://img.shields.io/pypi/v/templ8 (PyPi)
+[pypi_link]: https://pypi.org/project/templ8
 
-[python_version]: https://img.shields.io/pypi/pyversions/templater
+[python_version]: https://img.shields.io/pypi/pyversions/templ8
 
-[pypi_downloads]: https://img.shields.io/pypi/dw/templater
+[pypi_downloads]: https://img.shields.io/pypi/dw/templ8
 
-[issues]: https://img.shields.io/github/issues/joellefkowitz/templater (Issues)
-[issues_link]: https://github.com/JoelLefkowitz/templater/issues
+[issues]: https://img.shields.io/github/issues/joellefkowitz/templ8 (Issues)
+[issues_link]: https://github.com/JoelLefkowitz/templ8/issues
 
-[pulls]: https://img.shields.io/github/issues-pr/joellefkowitz/templater (Pull requests)
-[pulls_link]: https://github.com/JoelLefkowitz/templater/pulls
+[pulls]: https://img.shields.io/github/issues-pr/joellefkowitz/templ8 (Pull requests)
+[pulls_link]: https://github.com/JoelLefkowitz/templ8/pulls
 
 ### Installing
 
 Install the package from pypi:
 
 ```bash
-pip install templater
+pip install templ8
 ```
 
 Alternatively, you can clone the repo:
 
 ```bash
-git clone https://github.com/JoelLefkowitz/tempalter
+git clone https://github.com/JoelLefkowitz/temp8
 ```
 
 ## Running tests
+
 Tests are not included in the package build. Clone the repo to include all the source files.
 
 ```bash
@@ -48,6 +51,7 @@ pytest tests
 ```
 
 ## Docs
+
 Docs are not included in the package build. Clone the repo to include all the source files.
 
 To automatically update the documentation generation configuration:
@@ -62,10 +66,10 @@ Documentation can be generated locally:
 python setup.py generateDocs
 ```
 
-Then to view the generated docs visit ./build/sphinx/html/templater/docs/modules.html:
+Then to view the generated docs visit ./build/sphinx/html/templ8/docs/modules.html:
 
 ```bash
-open -a "Google Chrome" ./build/sphinx/html/templater/docs/modules.html
+open -a "Google Chrome" ./build/sphinx/html/templ8/docs/modules.html
 ```
 
 ## Contributing
@@ -84,6 +88,7 @@ bump2version patch
 ```
 
 Releases are made on every major change.
+
 ## Author
 
 * **Joel Lefkowitz** - *Initial work* - [Joel Lefkowitz](JoelLefkowitz)

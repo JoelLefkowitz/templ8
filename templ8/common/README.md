@@ -1,6 +1,8 @@
 # {{name}}
+
 {{description}}
 {% if package %}
+
 ## Status
 
 | Source  | Shields  |
@@ -42,6 +44,7 @@ git clone {{github_url}}
 ```
 
 ## Running tests
+
 Tests are not included in the package build. Clone the repo to include all the source files.
 
 ```bash
@@ -49,6 +52,7 @@ pytest tests
 ```
 
 ## Docs
+
 Docs are not included in the package build. Clone the repo to include all the source files.
 
 To automatically update the documentation generation configuration:
@@ -86,6 +90,7 @@ bump2version patch
 
 Releases are made on every major change.
 {% endif %}
+
 ## Author
 
 * **{{author}}** - *Initial work* - [{{author}}]({{author_github}})

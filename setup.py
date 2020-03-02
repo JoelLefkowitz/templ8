@@ -2,7 +2,7 @@ import subprocess
 from setuptools import find_packages, setup
 from distutils.core import Command
 
-__version__ = "0.1.0"
+__version__ = "0.3.0"
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -37,16 +37,23 @@ class GenerateDocs(Command):
 
 
 s = setup(
-    name="templater",
+    name="templ8",
     version=__version__,
     license="MIT",
     description="Configurable, intelligent project template generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/JoelLefkowitz/tempalter",
+    url="https://github.com/JoelLefkowitz/temp8",
     packages=find_packages(),
-    install_requires=[],
-    entry_points={"console_scripts": ["templater=templater.main:entrypoint"]},
+    include_package_data=True,
+    install_requires=[
+        "jinja2>=2.11.1",
+        "ruamel.yaml>=0.16.10",
+        "docopt>=0.6.2",
+        "emoji>=0.5.4",
+        "dataclasses>=0.7",
+    ],
+    entry_points={"console_scripts": [""]},
     cmdclass={"updateDocs": UpdateDocs, "generateDocs": GenerateDocs},
     python_requires=">= 3.6",
     author="Joel Lefkowitz",

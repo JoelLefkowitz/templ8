@@ -45,6 +45,7 @@ s = setup(
     long_description_content_type="text/markdown",
     url="{{github_url}}",
     packages=find_packages(),
+    include_package_data=True,
     install_requires=[],
     entry_points={"console_scripts": [""]},
     cmdclass={"updateDocs": UpdateDocs, "generateDocs": GenerateDocs},
