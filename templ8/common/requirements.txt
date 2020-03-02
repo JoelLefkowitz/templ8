@@ -1,4 +1,6 @@
-multi-job>=0.9.0
-bump2version>=1.0.0
-sphinx>=2.4.3
-sphinxcontrib-apidoc>=0.3.0
+multi-job>=0.10.10
+templ8>=0.3.1
+black>=19.10b0
+{% if webapp %}
+docker-droplet>=1.0.6
+{% endif %}
