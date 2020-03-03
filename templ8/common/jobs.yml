@@ -1,6 +1,6 @@
 jobs:
   fmt:
-    function: black . --exclude venv
+    command: black . --exclude venv
     targets:
       - all
 
