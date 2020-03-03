@@ -85,13 +85,7 @@ def main(config: dict, output_dir: str, options: dict) -> None:
         ]
     )
     context_dict.update({spec.root_name: True for spec in specs})
-    context_dict.update(
-        {
-            folder_name: spec.folder_aliases[folder_name].resolve(config)
-            for spec in specs
-            for folder_name in spec.folder_aliases
-        }
-    )
+    context_dict.update({folder_name: spec.folder_aliases[folder_name].resolve(config) for spec in specs for folder_name in spec.folder_aliases})
 
     for spec in specs:
 

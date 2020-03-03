@@ -53,7 +53,7 @@ s = setup(
         "emoji>=0.5.4",
         "dataclasses>=0.7",
     ],
-    entry_points={"console_scripts": [""]},
+    entry_points={"console_scripts": ["templ8=templ8.main:entrypoint"]},
     cmdclass={"updateDocs": UpdateDocs, "generateDocs": GenerateDocs},
     python_requires=">= 3.6",
     author="Joel Lefkowitz",
