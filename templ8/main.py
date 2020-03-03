@@ -1,24 +1,26 @@
-import os, sys, shutil
+import os
+import sys
+import shutil
 import ruamel.yaml  # type: ignore
 from inspect import cleandoc
 from typing import List, Tuple, Any
 from docopt import docopt  # type: ignore
 from pathlib import Path
 from glob import iglob
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Template
 
-import sys
+from pyimport import path_guard
 
-sys.path.append("..")
-from .exceptions import OutputDirInvalid, ConfigPathInvalid
-from .utils import pretty_log, get_child_files, stringer
-from .models import Context, Spec, Alias
+path_guard("..")
+from exceptions import OutputDirInvalid, ConfigPathInvalid
+from models import Context, Spec, Alias, Callback
+from utils import pretty_log
 
 
 CLI = cleandoc(
     """
     Usage:
-      template <config_path> <output_dir> [--overwrite --dry-run]
+      templ8 <config_path> <output_dir> [NAMES ...] [--overwrite --dry-run]
 
     Options:
       --overwrite
@@ -26,10 +28,13 @@ CLI = cleandoc(
     """
 )
 
+webapp_alias = Alias(Context("name"), lambda x: str(x).replace("-", "_") + "_app")
+webserver_alias = Alias(Context("name"), lambda x: str(x).replace("-", "_") + "_server")
+
 SPECS = [
     Spec(
-        "common",
-        [
+        name="common",
+        context_set=[
             Context("name"),
             Context("version", "0.1.0"),
             Context("description"),
@@ -37,22 +42,29 @@ SPECS = [
         ],
     ),
     Spec(
-        "package",
-        [
+        name="package",
+        context_set=[
             Context("author_email"),
             Context("author_github"),
             Context("github_url"),
             Context("twine_username"),
         ],
-        {"src": Alias(Context("name"), lambda x: stringer(x))},
+        folder_aliases={"src": Alias(Context("name"))},
     ),
     Spec(
-        "webapp",
-        [Context("github_url"),],
-        {
-            "app": Alias(Context("name"), lambda x: stringer(x) + "_app"),
-            "server": Alias(Context("name"), lambda x: stringer(x) + "_server"),
-        },
+        name="webapp",
+        dependencies=["common"],
+        context_set=[Context("github_url"),],
+        folder_aliases={"app": webapp_alias,},
+        callbacks=[Callback(["ng", "new", webapp_alias, "--directory", webapp_alias])],
+    ),
+    Spec(
+        name="server",
+        dependencies=["webapp"],
+        folder_aliases={"server": webserver_alias,},
+        callbacks=[
+            Callback(["django-admin", "startproject", webserver_alias, webserver_alias])
+        ],
     ),
 ]
 
@@ -60,7 +72,11 @@ SPECS = [
 def entrypoint() -> None:
     arguments = docopt(CLI)
     config_path, output_dir = arguments["<config_path>"], arguments["<output_dir>"]
-    options = {"overwrite": arguments["--overwrite"], "dry-run": arguments["--dry-run"]}
+    options = {
+        "overwrite": arguments["--overwrite"],
+        "dry-run": arguments["--dry-run"],
+        "specified_names": arguments["NAMES"],
+    }
 
     if not os.path.exists(config_path):
         raise ConfigPathInvalid(config_path)
@@ -75,8 +91,21 @@ def entrypoint() -> None:
 
 
 def main(config: dict, output_dir: str, options: dict) -> None:
-
+    templates_dir = os.path.dirname(__file__)
     specs = [spec for spec in SPECS if spec.check_condition(config)]
+    context_dict = bundle_context(config, specs)
+
+    for spec in specs:
+        for template, output_path in spec.load_templates(
+            config, templates_dir, output_dir
+        ):
+            generate_output(template, output_dir, context_dict, options)
+
+        for callback in spec.callbacks:
+            callback.run(config, output_dir)
+
+
+def bundle_context(config, specs) -> dict:
     context_dict = dict(
         [
             context.emit_from_config(config)
@@ -85,39 +114,32 @@ def main(config: dict, output_dir: str, options: dict) -> None:
         ]
     )
     context_dict.update({spec.root_name: True for spec in specs})
-    context_dict.update({folder_name: spec.folder_aliases[folder_name].resolve(config) for spec in specs for folder_name in spec.folder_aliases})
+    context_dict.update(
+        {
+            folder_name: spec.folder_aliases[folder_name].resolve(config)
+            for spec in specs
+            for folder_name in spec.folder_aliases
+        }
+    )
+    return context_dict
 
-    for spec in specs:
 
-        spec_root = os.path.join(os.path.dirname(__file__), spec.root_name)
-        for file in get_child_files(spec_root):
+def generate_output(
+    template: Template, output_path: str, context_dict: dict, options: dict
+) -> None:
+    filename = os.path.basename(os.path.normpath(output_path))
 
-            rel_input_path = os.path.relpath(file, spec_root)
-            folder_path, filename = os.path.split(rel_input_path)
+    if options["specified_names"] and filename not in options["specified_names"]:
+        pretty_log(output_path + " not in NAMES; skipping")
 
-            for folder_name in spec.folder_aliases:
-                folder_path = folder_path.replace(
-                    folder_name, spec.folder_aliases[folder_name].resolve(config)
-                )
+    elif os.path.exists(output_path) and not options["overwrite"]:
+        pretty_log(output_path + " exists; skipping")
 
-            output_path = os.path.join(output_dir, folder_path, filename)
+    elif options["dry-run"]:
+        pretty_log("Would write: " + output_path)
 
-            loader = Environment(
-                loader=FileSystemLoader(spec_root),
-                trim_blocks=True,
-                lstrip_blocks=True,
-                keep_trailing_newline=True,
-            )
-            template = loader.get_template(rel_input_path)
-            Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
-
-            if os.path.exists(output_path) and not options["overwrite"]:
-                pretty_log(output_path + " exists; skipping")
-
-            elif options["dry-run"]:
-                pretty_log("Would write: " + output_path)
-
-            else:
-                with open(output_path, "w") as f:
-                    f.write(template.render(context_dict))
-                    pretty_log("Generated: " + output_path)
+    else:
+        Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w") as f:
+            f.write(template.render(context_dict))
+            pretty_log("Generated: " + output_path)

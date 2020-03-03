@@ -16,7 +16,3 @@ def get_child_files(root):
 
         paths += [os.path.join(rel_root, file) for file in files]
     return paths
-
-
-def stringer(raw: Any) -> str:
-    return str(raw).replace("-", "_")

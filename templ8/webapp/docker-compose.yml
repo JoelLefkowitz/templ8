@@ -1,13 +1,13 @@
 version: '3.3'
 
   services:
-    {{name}}app:
-      image: {{name}}app:{{version}}
+    {{app}}:
+      image: {{app}}:{{version}}
       ports: 
         - 443:443
 
-    {{name}}server:
-      image: {{name}}server:{{version}}
+    {{server}}:
+      image: {{server}}:{{version}}
       depends_on: 
         - database
         - cache
