@@ -1,6 +1,6 @@
-multi-job>=0.10.10
-templ8>=0.3.3
+multi-job>=1.0.0
+templ8>=1.0.0
 black>=19.10b0
 {% if webapp %}
-docker-droplet>=1.0.6
+docker-droplet>=1.0.0
 {% endif %}

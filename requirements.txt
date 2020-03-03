@@ -1,3 +1,3 @@
-multi-job>=0.10.11
-templ8>=0.4.0
+multi-job>=1.0.0
+templ8>=1.0.0
 black>=19.10b0

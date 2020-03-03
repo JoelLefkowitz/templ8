@@ -22,7 +22,7 @@ jobs:
   pypi-upload:
     function: pypi_upload:main
     context:
-      release_type: patch
+      release_type: minor
       twine_username: joellefkowitz
 
 
