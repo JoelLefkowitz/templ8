@@ -52,7 +52,7 @@ s = setup(
         "docopt>=0.6.2",
         "emoji>=0.5.4",
         "dataclasses>=0.7",
-        "pyimport>=0.1.4",
+        "pyimport>=0.3.0",
     ],
     entry_points={"console_scripts": ["templ8=templ8.main:entrypoint"]},
     cmdclass={"updateDocs": UpdateDocs, "generateDocs": GenerateDocs},

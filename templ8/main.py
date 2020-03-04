@@ -99,7 +99,7 @@ def main(config: dict, output_dir: str, options: dict) -> None:
         for template, output_path in spec.load_templates(
             config, templates_dir, output_dir
         ):
-            generate_output(template, output_dir, context_dict, options)
+            generate_output(template, output_path, context_dict, options)
 
         for callback in spec.callbacks:
             callback.run(config, output_dir)
