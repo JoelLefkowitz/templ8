@@ -25,6 +25,9 @@ class Context:
         else:
             raise MissingConfig(self.name)
 
+    def __str__(self):
+        return f"Context({self.name})"
+
 
 @dataclass
 class Alias:
@@ -34,6 +37,9 @@ class Alias:
     def resolve(self, config: dict) -> str:
         name, value = self.context.emit_from_config(config)
         return self.formatter(value)
+
+    def __repr__(self):
+        return f"Alias for {self.context}"
 
 
 @dataclass
