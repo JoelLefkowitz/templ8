@@ -2,7 +2,7 @@ import subprocess
 from setuptools import find_packages, setup
 from distutils.core import Command
 
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -49,7 +49,7 @@ s = setup(
     install_requires=[
         "jinja2>=2.11.1",
         "ruamel.yaml>=0.16.10",
-        "docopt>=0.6.2",
+        "docopt>=0.6.3",
         "emoji>=0.5.4",
         "dataclasses>=0.7",
         "pyimport>=0.3.0",
