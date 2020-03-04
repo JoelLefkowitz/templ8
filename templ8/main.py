@@ -11,7 +11,7 @@ from jinja2 import Template
 
 from pyimport import path_guard
 
-path_guard("..")
+path_guard(__file__, "..")
 from exceptions import OutputDirInvalid, ConfigPathInvalid
 from models import Context, Spec, Alias, Callback
 from utils import pretty_log
@@ -33,7 +33,7 @@ webserver_alias = Alias(Context("name"), lambda x: str(x).replace("-", "_") + "_
 
 SPECS = [
     Spec(
-        name="common",
+        root_name="common",
         context_set=[
             Context("name"),
             Context("version", "0.1.0"),
@@ -42,7 +42,7 @@ SPECS = [
         ],
     ),
     Spec(
-        name="package",
+        root_name="package",
         context_set=[
             Context("author_email"),
             Context("author_github"),
@@ -52,14 +52,14 @@ SPECS = [
         folder_aliases={"src": Alias(Context("name"))},
     ),
     Spec(
-        name="webapp",
+        root_name="webapp",
         dependencies=["common"],
         context_set=[Context("github_url"),],
         folder_aliases={"app": webapp_alias,},
         callbacks=[Callback(["ng", "new", webapp_alias, "--directory", webapp_alias])],
     ),
     Spec(
-        name="server",
+        root_name="server",
         dependencies=["webapp"],
         folder_aliases={"server": webserver_alias,},
         callbacks=[

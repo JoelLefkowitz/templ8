@@ -3,7 +3,7 @@ import subprocess
 
 from pyimport import path_guard
 
-path_guard("..")
+path_guard(__file__, "..")
 from exceptions import MissingConfig
 from utils import get_child_files
 
@@ -50,8 +50,8 @@ class Callback:
 @dataclass
 class Spec:
     root_name: str
-    dependencies: List[str]
-    context_set: List[Context]
+    dependencies: List[str] = field(default_factory=list)
+    context_set: List[Context] = field(default_factory=list)
     folder_aliases: Dict[str, Alias] = field(default_factory=dict)
     callbacks: List[Callback] = field(default_factory=list)
 
