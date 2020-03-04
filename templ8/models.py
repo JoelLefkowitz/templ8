@@ -72,7 +72,7 @@ class Spec:
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
-        )   
+        )
 
         for file in get_child_files(spec_root):
             rel_input_path = os.path.relpath(file, template_dir)
@@ -82,7 +82,7 @@ class Spec:
                 folder_path = folder_path.replace(
                     folder_name, self.folder_aliases[folder_name].resolve(config)
                 )
-                
+
             output_path = os.path.join(output_dir, folder_path, filename)
             template = loader.get_template(rel_input_path)
             yield template, output_path

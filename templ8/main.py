@@ -86,7 +86,7 @@ def entrypoint() -> None:
 
     with open(config_path, "r") as stream:
         config = ruamel.yaml.load(stream, Loader=ruamel.yaml.Loader)
-        
+
     main(config, output_dir, options)
 
 
@@ -102,7 +102,7 @@ def main(config: dict, output_dir: str, options: dict) -> None:
             generate_output(template, output_path, context_dict, options)
 
         for callback in spec.callbacks:
-            if options["dry-run"] or options["specified_names"]:        
+            if options["dry-run"] or options["specified_names"]:
                 pretty_log(f"Would callback: {callback.call}")
             else:
                 callback.run(config, output_dir)
