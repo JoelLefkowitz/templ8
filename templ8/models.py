@@ -68,21 +68,21 @@ class Spec:
     ) -> Iterator[Tuple[Template, str]]:
         spec_root = os.path.join(template_dir, self.root_name)
         loader = Environment(
-            loader=FileSystemLoader(spec_root),
+            loader=FileSystemLoader(template_dir),
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
-        )
+        )   
 
         for file in get_child_files(spec_root):
-            rel_input_path = os.path.relpath(file, spec_root)
+            rel_input_path = os.path.relpath(file, template_dir)
             folder_path, filename = os.path.split(rel_input_path)
 
             for folder_name in self.folder_aliases:
                 folder_path = folder_path.replace(
                     folder_name, self.folder_aliases[folder_name].resolve(config)
                 )
-
+                
             output_path = os.path.join(output_dir, folder_path, filename)
             template = loader.get_template(rel_input_path)
             yield template, output_path

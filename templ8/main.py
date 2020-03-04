@@ -55,7 +55,7 @@ SPECS = [
         root_name="webapp",
         dependencies=["common"],
         context_set=[Context("github_url"),],
-        folder_aliases={"app": webapp_alias,},
+        folder_aliases={"webapp": webapp_alias,},
         callbacks=[Callback(["ng", "new", webapp_alias, "--directory", webapp_alias])],
     ),
     Spec(
@@ -86,7 +86,7 @@ def entrypoint() -> None:
 
     with open(config_path, "r") as stream:
         config = ruamel.yaml.load(stream, Loader=ruamel.yaml.Loader)
-
+        
     main(config, output_dir, options)
 
 
