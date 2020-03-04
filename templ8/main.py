@@ -103,7 +103,7 @@ def main(config: dict, output_dir: str, options: dict) -> None:
 
         for callback in spec.callbacks:
             if options["dry-run"] or options["specified_names"]:        
-                pretty_log("Would callback: " + callback.call)
+                pretty_log(f"Would callback: {callback.call}")
             else:
                 callback.run(config, output_dir)
 
