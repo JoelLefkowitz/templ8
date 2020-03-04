@@ -102,7 +102,10 @@ def main(config: dict, output_dir: str, options: dict) -> None:
             generate_output(template, output_path, context_dict, options)
 
         for callback in spec.callbacks:
-            callback.run(config, output_dir)
+            if options["dry-run"] or options["specified_names"]:        
+                pretty_log("Would callback: " + callback.call)
+            else:
+                callback.run(config, output_dir)
 
 
 def bundle_context(config, specs) -> dict:
