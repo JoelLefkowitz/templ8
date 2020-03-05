@@ -62,8 +62,16 @@ projects:
 {% if webapp %}
   {{webapp}}:
     path: ../{{webapp}}
+    context:
+      image_name: {{webapp}}
+      version: {{version}}
+{% endif %}
+{% if webapp %}
   {{server}}:
     path: ../{{server}}
+    context:
+      image_name: {{server}}
+      version: {{version}}
 {% endif %}
 
 routines:
