@@ -38,4 +38,4 @@ routines:
   release:
     - fmt
     - clean
-    - pypi_upload
+    - pypi-upload
