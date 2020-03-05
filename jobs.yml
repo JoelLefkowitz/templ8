@@ -25,6 +25,10 @@ jobs:
       release_type: patch
       twine_username: joellefkowitz
 
+  purge:
+    command: purge .
+    context:
+      twine_username: joellefkowitz
 
 projects:
   templ8:
@@ -34,4 +38,4 @@ routines:
   release:
     - fmt
     - clean
-    - pypi-upload
+    - pypi_upload

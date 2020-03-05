@@ -19,7 +19,7 @@ class UpdateDocs(Command):
         pass
 
     def run(self) -> None:
-        subprocess.run(["sphinx-apidoc", "-o", "docs/", "src/", "tests/"])
+        subprocess.run(["sphinx-apidoc", "-o", "docs/", "{{src}}/", "tests/"])
 
 
 class GenerateDocs(Command):

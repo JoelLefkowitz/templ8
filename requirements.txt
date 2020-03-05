@@ -1,3 +1,4 @@
 multi-job>=1.0.0
 templ8>=1.0.0
 black>=19.10b0
+purge>=1.0.0

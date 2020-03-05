@@ -3,14 +3,14 @@
 FROM node:latest AS builder
 
 # Build prod and dev dependencies before app to cache them
-COPY package.json /{{name}}app/package.json
-WORKDIR /{{name}}app
+COPY package.json /{{webapp}}/package.json
+WORKDIR /{{webapp}}
 RUN npm i
-ENV PATH /{{name}}app/node_modules/.bin:$PATH
+ENV PATH /{{webapp}}/node_modules/.bin:$PATH
 
-COPY . /{{name}}app/
+COPY . /{{webapp}}/
 
 # Example Angular build
 RUN ng build
 
-ONBUILD COPY --from=builder /{{name}}app/dist/ /etc/nginx/html/
+ONBUILD COPY --from=builder /{{webapp}}/dist/ /etc/nginx/html/

@@ -11,14 +11,14 @@ jobs:
       env-targets:
         - {{name}}
 
-      {% if package %}
+{% if package %}
   clean:
     function: clean:main
     context:
       clean_dirs:
         - build
         - dist
-        - {{name}}.egg-info
+        - {{src}}.egg-info
 
   pypi-upload:
     function: pypi_upload:main
@@ -26,13 +26,17 @@ jobs:
       release_type: patch
       twine_username: {{twine_username}}
 
-  {% endif %}
-  {% if webapp %}
+  purge:
+    command: purge .
+    context:
+      twine_username: {{twine_username}}
+{% endif %}
+{% if webapp %}
   build:
     function: build:main
     targets: 
-      - {{name}}app
-      - {{name}}server
+      - {{webapp}}
+      - {{server}}
 
   deploy:
     function: deploy:main
@@ -42,32 +46,32 @@ jobs:
       docker_compose_file: docker-compose.yml
       version: {{version}}
       image_names:
-        - {{name}}app
-        - {{name}}server
-  {% endif %}
+        - {{webapp}}
+        - {{server}}
+{% endif %}
 
 projects:
-  {% if package %}
-  {{name}}:
-    path: ../{{name}}
-  {% endif %}
-  {% if webapp %}
-  {{name}}app:
-    path: ../{{name}}app
-  {{name}}server:
-    path: ../{{name}}server
-  {% endif %}
+{% if package %}
+  {{src}}:
+    path: ../{{src}}
+{% endif %}
+{% if webapp %}
+  {{webapp}}:
+    path: ../{{webapp}}
+  {{server}}:
+    path: ../{{server}}
+{% endif %}
 
 routines:
-  {% if package %}
+{% if package %}
   release:
     - fmt
     - clean
     - pypi_upload
-  {% endif %}
-  {% if webapp %}
+{% endif %}
+{% if webapp %}
   deploy:
     - fmt
     - build
     - deploy
-  {% endif %}
+{% endif %}

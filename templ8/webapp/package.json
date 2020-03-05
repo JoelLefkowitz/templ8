@@ -1,5 +1,5 @@
 {
-  "name": "{{name}}app",
+  "name": "{{webapp}}",
   "version": "{{version}}",
   "description": "{{description}}",
   "main": "index.js",

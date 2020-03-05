@@ -1,4 +1,5 @@
 import os
+import pathlib
 import subprocess
 
 from pyimport import path_guard
@@ -17,6 +18,9 @@ class Context:
     name: str
     default: Any = None
 
+    def __str__(self):
+        return f"Context({self.name})"
+
     def emit_from_config(self, config: dict) -> Tuple[str, Any]:
         if config and self.name in config:
             return self.name, config[self.name]
@@ -25,21 +29,23 @@ class Context:
         else:
             raise MissingConfig(self.name)
 
-    def __str__(self):
-        return f"Context({self.name})"
-
 
 @dataclass
 class Alias:
     context: Context
     formatter: Callable[[Any], str] = lambda x: str(x).replace("-", "_")
 
+    def __repr__(self):
+        return f"Alias for {self.context}"
+
     def resolve(self, config: dict) -> str:
         name, value = self.context.emit_from_config(config)
         return self.formatter(value)
 
-    def __repr__(self):
-        return f"Alias for {self.context}"
+    def replace_in_path(self, target_name: str, folder_path: str, config: dict) -> str:
+        parts = pathlib.Path(folder_path).parts
+        replaced = [self.resolve(config) if i is target_name else i for i in parts]
+        return os.path.join("", *replaced)
 
 
 @dataclass
@@ -72,7 +78,6 @@ class Spec:
     def load_templates(
         self, config: dict, template_dir: str, output_dir: str
     ) -> Iterator[Tuple[Template, str]]:
-        spec_root = os.path.join(template_dir, self.root_name)
         loader = Environment(
             loader=FileSystemLoader(template_dir),
             trim_blocks=True,
@@ -80,15 +85,21 @@ class Spec:
             keep_trailing_newline=True,
         )
 
-        for file in get_child_files(spec_root):
-            rel_input_path = os.path.relpath(file, template_dir)
-            folder_path, filename = os.path.split(rel_input_path)
+        root_path = os.path.join(template_dir, self.root_name)
+        for file_path in get_child_files(root_path):
 
-            for folder_name in self.folder_aliases:
-                folder_path = folder_path.replace(
-                    folder_name, self.folder_aliases[folder_name].resolve(config)
-                )
+            template_path = os.path.relpath(file_path, template_dir)
+            template = loader.get_template(template_path)
 
-            output_path = os.path.join(output_dir, folder_path, filename)
-            template = loader.get_template(rel_input_path)
+            rel_file_path = os.path.relpath(file_path, root_path)
+            rel_file_path = self.replace_path_aliases(rel_file_path, config)
+            output_path = os.path.join(output_dir, rel_file_path)
             yield template, output_path
+
+    def replace_path_aliases(self, file_path: str, config: dict) -> str:
+        folder_path, filename = os.path.split(file_path)
+
+        for target_name, alias in self.folder_aliases.items():
+            folder_path = alias.replace_in_path(target_name, folder_path, config)
+
+        return os.path.join(folder_path, filename)
