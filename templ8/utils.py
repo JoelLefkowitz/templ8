@@ -16,3 +16,7 @@ def get_child_files(root):
 
         paths += [os.path.join(rel_root, file) for file in files]
     return paths
+
+
+def inclusive_relpath(target: str, source: str) -> str:
+    return os.path.join(os.path.basename(source), os.path.relpath(target, source))

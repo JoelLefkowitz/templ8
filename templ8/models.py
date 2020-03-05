@@ -6,7 +6,7 @@ from pyimport import path_guard
 
 path_guard(__file__, "..")
 from exceptions import MissingConfig
-from utils import get_child_files
+from utils import get_child_files, inclusive_relpath
 
 from dataclasses import dataclass, field
 from typing import List, Tuple, Any, Callable, Dict, Iterator, Union
@@ -91,7 +91,7 @@ class Spec:
             template_path = os.path.relpath(file_path, template_dir)
             template = loader.get_template(template_path)
 
-            rel_file_path = os.path.relpath(file_path, root_path)
+            rel_file_path = inclusive_relpath(file_path, root_path)
             rel_file_path = self.replace_path_aliases(rel_file_path, config)
             output_path = os.path.join(output_dir, rel_file_path)
             yield template, output_path

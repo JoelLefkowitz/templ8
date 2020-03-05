@@ -56,7 +56,19 @@ SPECS = [
         dependencies=["common"],
         context_set=[Context("github_url"),],
         folder_aliases={"webapp": webapp_alias,},
-        callbacks=[Callback(["ng", "new", webapp_alias, "--directory", webapp_alias])],
+        callbacks=[
+            Callback(
+                [
+                    "ng",
+                    "new",
+                    "--routing=true",
+                    "--style=scss",
+                    webapp_alias,
+                    "--directory",
+                    webapp_alias,
+                ]
+            )
+        ],
     ),
     Spec(
         root_name="server",
