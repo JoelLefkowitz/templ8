@@ -1,6 +1,6 @@
 {
   "name": "templ8",
-  "version": "0.6.12",
+  "version": "0.6.13",
   "description": "Configurable, intelligent project template generator",
   "main": "index.js",
   "scripts": {
