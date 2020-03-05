@@ -55,6 +55,7 @@ SPECS = [
         root_name="webapp",
         dependencies=["common"],
         context_set=[Context("github_url"),],
+        include_root_dir=True,
         folder_aliases={"webapp": webapp_alias,},
         callbacks=[
             Callback(
@@ -74,6 +75,7 @@ SPECS = [
         root_name="server",
         dependencies=["webapp"],
         folder_aliases={"server": webserver_alias,},
+        include_root_dir=True,
         callbacks=[
             Callback(["django-admin", "startproject", webserver_alias, webserver_alias])
         ],
