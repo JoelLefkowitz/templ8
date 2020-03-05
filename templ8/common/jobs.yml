@@ -31,14 +31,19 @@ jobs:
     context:
       twine_username: {{twine_username}}
 {% endif %}
-{% if webapp %}
+{% if server %}
   build:
     function: build:main
     targets: 
-      - {{webapp}}
-{% if server %}
       - {{server}}
 {% endif %}
+{% if webapp %}
+  multi-stage-build:
+    function: multi_stage_build:main
+    context:
+      build_stage_prefix: build
+    targets: 
+      - {{webapp}}
 
   deploy:
     function: deploy:main
