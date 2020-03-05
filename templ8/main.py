@@ -112,13 +112,16 @@ def main(config: dict, output_dir: str, options: dict) -> None:
     context_dict = bundle_context(config, specs)
 
     for spec in specs:
+        skipped_any = False
         for template, output_path in spec.load_templates(
             config, templates_dir, output_dir
         ):
-            generate_output(template, output_path, context_dict, options)
+            success = generate_output(template, output_path, context_dict, options)
+            if not success:
+                skipped_any = True
 
         for callback in spec.callbacks:
-            if options["dry-run"] or options["specified_names"]:
+            if skipped_any:
                 pretty_log(f"Would callback: {callback.call}")
             else:
                 callback.run(config, output_dir)
@@ -145,20 +148,23 @@ def bundle_context(config, specs) -> dict:
 
 def generate_output(
     template: Template, output_path: str, context_dict: dict, options: dict
-) -> None:
+) -> bool:
     filename = os.path.basename(os.path.normpath(output_path))
 
     if options["specified_names"] and filename not in options["specified_names"]:
         pretty_log(output_path + " not in NAMES; skipping")
+        return False
 
-    elif os.path.exists(output_path) and not options["overwrite"]:
+    if os.path.exists(output_path) and not options["overwrite"]:
         pretty_log(output_path + " exists; skipping")
+        return False
 
-    elif options["dry-run"]:
+    if options["dry-run"]:
         pretty_log("Would write: " + output_path)
+        return False
 
-    else:
-        Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
-            f.write(template.render(context_dict))
-            pretty_log("Generated: " + output_path)
+    Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w") as f:
+        f.write(template.render(context_dict))
+        pretty_log("Generated: " + output_path)
+    return True
