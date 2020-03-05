@@ -2,9 +2,9 @@
 FROM python:latest
 
 # Build dependencies first for imporved caching
-COPY requirements.txt /{{name}}server/requirements.txt
+COPY requirements.txt /{{server}}/requirements.txt
 
-WORKDIR /{{name}}server
+WORKDIR /{{server}}
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
