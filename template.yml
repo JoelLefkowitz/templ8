@@ -2,7 +2,7 @@ common: True
 package: True
 
 name: templ8
-version: 0.6.16
+version: 0.6.17
 description: Configurable, intelligent project template generator
 
 author: Joel Lefkowitz
