@@ -2,7 +2,7 @@ import subprocess
 from setuptools import find_packages, setup
 from distutils.core import Command
 
-__version__ = "0.6.15"
+__version__ = "0.6.16"
 
 with open("README.md", "r") as f:
     long_description = f.read()
