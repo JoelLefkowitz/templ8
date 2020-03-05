@@ -86,9 +86,11 @@ routines:
     - clean
     - pypi-upload
 {% endif %}
-{% if webapp %}
+{% if webapp %}    
   deploy:
     - fmt
+    - clean
     - build
+    - multi-stage-build
     - deploy
 {% endif %}

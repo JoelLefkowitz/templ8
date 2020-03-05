@@ -1,6 +1,7 @@
 multi-job>=1.0.0
 templ8>=1.0.0
 black>=19.10b0
+wheel>=0.34.2
 {% if package %}
 purge>=1.0.0
 {% endif %}

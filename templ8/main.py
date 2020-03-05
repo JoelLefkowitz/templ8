@@ -20,11 +20,12 @@ from utils import pretty_log, to_app_name, to_camelcase_app_name, to_server_name
 CLI = cleandoc(
     """
     Usage:
-      templ8 <config_path> <output_dir> [NAMES ...] [--overwrite --dry-run]
+      templ8 <config_path> <output_dir> [--overwrite | --dry-run] [<NAMES> ...]
 
     Options:
       --overwrite
       --dry-run
+      --template-dir
     """
 )
 
@@ -88,6 +89,7 @@ SPECS = [
 def entrypoint() -> None:
     arguments = docopt(CLI)
     config_path, output_dir = arguments["<config_path>"], arguments["<output_dir>"]
+    templates_dir = os.path.dirname(__file__)
     options = {
         "overwrite": arguments["--overwrite"],
         "dry-run": arguments["--dry-run"],
@@ -103,11 +105,10 @@ def entrypoint() -> None:
     with open(config_path, "r") as stream:
         config = ruamel.yaml.load(stream, Loader=ruamel.yaml.Loader)
 
-    main(config, output_dir, options)
+    main(config, template_dir, output_dir, options)
 
 
-def main(config: dict, output_dir: str, options: dict) -> None:
-    templates_dir = os.path.dirname(__file__)
+def main(config: dict, template_dir: str, output_dir: str, options: dict) -> None:
     specs = [spec for spec in SPECS if spec.check_condition(config)]
     context_dict = bundle_context(config, specs)
 
