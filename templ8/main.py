@@ -14,7 +14,7 @@ from pyimport import path_guard
 path_guard(__file__, "..")
 from exceptions import OutputDirInvalid, ConfigPathInvalid
 from models import Context, Spec, Alias, Callback
-from utils import pretty_log
+from utils import pretty_log, to_app_name, to_camelcase_app_name, to_server_name
 
 
 CLI = cleandoc(
@@ -28,8 +28,9 @@ CLI = cleandoc(
     """
 )
 
-webapp_alias = Alias(Context("name"), lambda x: str(x).replace("-", "_") + "_app")
-webserver_alias = Alias(Context("name"), lambda x: str(x).replace("-", "_") + "_server")
+webapp_alias = Alias(Context("name"), lambda x: to_app_name(x))
+webapp_camelcase_alias = Alias(Context("name"), lambda x: to_camelcase_app_name(x))
+webserver_alias = Alias(Context("name"), lambda x: to_server_name(x))
 
 SPECS = [
     Spec(
@@ -58,17 +59,18 @@ SPECS = [
         include_root_dir=True,
         folder_aliases={"webapp": webapp_alias,},
         callbacks=[
+            Callback(["ng", "config", "-g", "cli.packageManager", "yarn"]),
             Callback(
                 [
                     "ng",
                     "new",
                     "--routing=true",
                     "--style=scss",
-                    webapp_alias,
+                    webapp_camelcase_alias,
                     "--directory",
                     webapp_alias,
                 ]
-            )
+            ),
         ],
     ),
     Spec(

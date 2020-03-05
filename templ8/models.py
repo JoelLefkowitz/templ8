@@ -92,7 +92,11 @@ class Spec:
             template_path = os.path.relpath(file_path, template_dir)
             template = loader.get_template(template_path)
 
-            rel_file_path = inclusive_relpath(file_path, root_path) if self.include_root_dir else os.path.relpath(file_path, root_path)
+            rel_file_path = (
+                inclusive_relpath(file_path, root_path)
+                if self.include_root_dir
+                else os.path.relpath(file_path, root_path)
+            )
             rel_file_path = self.replace_path_aliases(rel_file_path, config)
             output_path = os.path.join(output_dir, rel_file_path)
             yield template, output_path

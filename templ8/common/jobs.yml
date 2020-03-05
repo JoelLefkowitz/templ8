@@ -36,7 +36,9 @@ jobs:
     function: build:main
     targets: 
       - {{webapp}}
+{% if server %}
       - {{server}}
+{% endif %}
 
   deploy:
     function: deploy:main
@@ -47,7 +49,9 @@ jobs:
       version: {{version}}
       image_names:
         - {{webapp}}
+{% if server %}
         - {{server}}
+{% endif %}
 {% endif %}
 
 projects:
