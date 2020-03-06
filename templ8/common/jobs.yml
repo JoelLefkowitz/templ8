@@ -11,10 +11,11 @@ jobs:
       env-targets:
         - {{name}}
 
-  dotenv:
-    command: yenv:main
-    env-files:
-      - {{name}}.env
+  main-env:
+    command: export ${cat {{name}}.env}
+  
+  template:
+    command: templ8 ./template.yml .
 
 {% if package %}
   docs:
