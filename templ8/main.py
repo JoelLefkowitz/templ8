@@ -17,79 +17,10 @@ from models import Context, Spec, Alias, Callback
 from utils import pretty_log, to_app_name, to_camelcase_app_name, to_server_name
 
 
-CLI = cleandoc(
-    """
-    Usage:
-      templ8 <config_path> <output_dir> [--overwrite | --dry-run] [<NAMES> ...]
-
-    Options:
-      --overwrite
-      --dry-run
-      --template-dir
-    """
-)
-
-webapp_alias = Alias(Context("name"), lambda x: to_app_name(x))
-webapp_camelcase_alias = Alias(Context("name"), lambda x: to_camelcase_app_name(x))
-webserver_alias = Alias(Context("name"), lambda x: to_server_name(x))
-
-SPECS = [
-    Spec(
-        root_name="common",
-        context_set=[
-            Context("name"),
-            Context("version", "0.1.0"),
-            Context("description"),
-            Context("author"),
-        ],
-    ),
-    Spec(
-        root_name="package",
-        context_set=[
-            Context("author_email"),
-            Context("author_github"),
-            Context("github_url"),
-            Context("twine_username"),
-        ],
-        folder_aliases={"src": Alias(Context("name"))},
-    ),
-    Spec(
-        root_name="webapp",
-        dependencies=["common"],
-        context_set=[Context("github_url"),],
-        include_root_dir=True,
-        folder_aliases={"webapp": webapp_alias,},
-        callbacks=[
-            Callback(["ng", "config", "-g", "cli.packageManager", "yarn"]),
-            Callback(
-                [
-                    "ng",
-                    "new",
-                    "--routing=true",
-                    "--style=scss",
-                    webapp_camelcase_alias,
-                    "--directory",
-                    webapp_alias,
-                ]
-            ),
-        ],
-    ),
-    Spec(
-        root_name="server",
-        dependencies=["webapp"],
-        folder_aliases={"server": webserver_alias,},
-        include_root_dir=True,
-        callbacks=[
-            Callback(["django-admin", "startproject", webserver_alias, webserver_alias])
-        ],
-    ),
-]
-
-
 def entrypoint() -> None:
     arguments = docopt(CLI)
     config_path, output_dir = arguments["<config_path>"], arguments["<output_dir>"]
-    templates_dir = os.path.dirname(__file__)
+    template_dir = os.path.dirname(__file__)
     options = {
         "overwrite": arguments["--overwrite"],
         "dry-run": arguments["--dry-run"],
@@ -115,7 +46,7 @@ def main(config: dict, template_dir: str, output_dir: str, options: dict) -> Non
     for spec in specs:
         skipped_any = False
         for template, output_path in spec.load_templates(
-            config, templates_dir, output_dir
+            config, template_dir, output_dir
         ):
             success = generate_output(template, output_path, context_dict, options)
             if not success:

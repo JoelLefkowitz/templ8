@@ -3,14 +3,14 @@ jobs:
     command: black . --exclude venv
     targets:
       - all
-
   yenv:
     function: yenv:main
     context:
-      yenv-file: ../environment.yml
+      yenv-file: environment.yml
       env-targets:
         - templ8
-
+  docs:
+    command: python setup.py updateDocs
   clean:
     function: clean:main
     context:
@@ -18,16 +18,10 @@ jobs:
         - build
         - dist
         - templ8.egg-info
-
   pypi-upload:
     function: pypi_upload:main
     context:
       release_type: patch
-      twine_username: joellefkowitz
-
-  purge:
-    command: purge .
-    context:
       twine_username: joellefkowitz
 
 projects:
@@ -35,7 +29,7 @@ projects:
     path: ../templ8
 
 routines:
-  release:
+  pre-release:
     - fmt
     - clean
-    - pypi-upload
+    - docs

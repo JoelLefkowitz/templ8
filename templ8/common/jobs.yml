@@ -7,11 +7,19 @@ jobs:
   yenv:
     function: yenv:main
     context:
-      yenv-file: ../environment.yml
+      yenv-file: environment.yml
       env-targets:
         - {{name}}
 
+  dotenv:
+    command: yenv:main
+    env-files:
+      - {{name}}.env
+
 {% if package %}
+  docs:
+    command: python setup.py updateDocs
+  
   clean:
     function: clean:main
     context:
@@ -19,7 +27,7 @@ jobs:
         - build
         - dist
         - {{src}}.egg-info
-
+  
   pypi-upload:
     function: pypi_upload:main
     context:
@@ -27,22 +35,22 @@ jobs:
       twine_username: {{twine_username}}
 
   purge:
-    command: purge .
-    context:
-      twine_username: {{twine_username}}
+    command: purge {{src}} {{twine_username}}
+
 {% endif %}
 {% if server %}
   build:
     function: build:main
-    targets: 
+    targets:
       - {{server}}
+
 {% endif %}
 {% if webapp %}
   multi-stage-build:
     function: multi_stage_build:main
     context:
       build_stage_prefix: build
-    targets: 
+    targets:
       - {{webapp}}
 
   deploy:
@@ -57,12 +65,13 @@ jobs:
 {% if server %}
         - {{server}}
 {% endif %}
-{% endif %}
 
+{% endif %}
 projects:
 {% if package %}
   {{src}}:
     path: ../{{src}}
+
 {% endif %}
 {% if webapp %}
   {{webapp}}:
@@ -70,6 +79,7 @@ projects:
     context:
       image_name: {{webapp}}
       version: {{version}}
+
 {% endif %}
 {% if webapp %}
   {{server}}:
@@ -77,20 +87,21 @@ projects:
     context:
       image_name: {{server}}
       version: {{version}}
-{% endif %}
 
+{% endif %}
 routines:
 {% if package %}
-  release:
+  pre-release:
     - fmt
     - clean
-    - pypi-upload
+    - docs
+
 {% endif %}
-{% if webapp %}    
-  deploy:
+{% if webapp %}
+  pre-deploy:
     - fmt
     - clean
     - build
     - multi-stage-build
-    - deploy
+
 {% endif %}

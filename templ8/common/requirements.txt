@@ -8,3 +8,14 @@ purge>=1.0.0
 {% if webapp %}
 docker-droplet>=1.0.0
 {% endif %}
+{% if install_requires % }
+{% for requirement in install_requires %}
+{{requirement}}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if extra_requirements % }
+{% for requirement in extra_requirements %}
+{{requirement}}
+{% endfor %}
+{% endif %}

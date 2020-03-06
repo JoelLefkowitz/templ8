@@ -1,6 +1,7 @@
 # {{name}}
 
 {{description}}
+
 {% if package %}
 
 ## Status
@@ -37,6 +38,12 @@ Alternatively, you can clone the repo:
 git clone {{github_url}}
 ```
 
+{% endif %}
+## Usage
+
+{{readme}}
+
+{% if package %}
 ## Running tests
 
 Tests are not included in the package build. Clone the repo to include all the source files.
@@ -83,8 +90,8 @@ bump2version patch
 ```
 
 Releases are made on every major change.
-{% endif %}
 
+{% endif %}
 ## Author
 
 - **{{author}}** - _Initial work_ - [{{author}}]({{author_github}})
