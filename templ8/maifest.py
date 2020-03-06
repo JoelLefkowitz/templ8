@@ -1,3 +1,9 @@
+from pyimport import path_guard
+from inspect import cleandoc
+
+from pyimport import path_guard; path_guard(__file__, "..")
+from models import Context, Spec, Alias, Callback
+from utils import to_app_name, to_camelcase_app_name, to_server_name
 
 CLI = cleandoc(
     """

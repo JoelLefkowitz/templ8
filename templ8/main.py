@@ -2,19 +2,16 @@ import os
 import sys
 import shutil
 import ruamel.yaml  # type: ignore
-from inspect import cleandoc
-from typing import List, Tuple, Any
 from docopt import docopt  # type: ignore
 from pathlib import Path
 from glob import iglob
 from jinja2 import Template
+from typing import List, Tuple, Any
 
-from pyimport import path_guard
-
-path_guard(__file__, "..")
+from pyimport import path_guard; path_guard(__file__, "..")
+from manifest import SPECS, CLI
 from exceptions import OutputDirInvalid, ConfigPathInvalid
-from models import Context, Spec, Alias, Callback
-from utils import pretty_log, to_app_name, to_camelcase_app_name, to_server_name
+from utils import pretty_log
 
 
 def entrypoint() -> None:
