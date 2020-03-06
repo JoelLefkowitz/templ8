@@ -22,6 +22,7 @@ def entrypoint() -> None:
         "overwrite": arguments["--overwrite"],
         "dry-run": arguments["--dry-run"],
         "specified_names": arguments["NAMES"],
+        "no_callbacks": arguments["--no-callbacks"],
     }
 
     if not os.path.exists(config_path):
@@ -52,6 +53,8 @@ def main(config: dict, template_dir: str, output_dir: str, options: dict) -> Non
         for callback in spec.callbacks:
             if skipped_any:
                 pretty_log(f"Would callback: {callback.call}")
+            elif options['no_callacks']:
+                pretty_log(f"Skippig callback: {callback.call}")
             else:
                 callback.run(config, output_dir)
 

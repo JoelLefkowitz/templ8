@@ -8,11 +8,12 @@ from utils import to_app_name, to_camelcase_app_name, to_server_name
 CLI = cleandoc(
     """
     Usage:
-      templ8 <config_path> <output_dir> [--overwrite | --dry-run] [NAMES ...]
+      templ8 <config_path> <output_dir> [--overwrite | --dry-run] [--no-callbacks] [NAMES ...]
 
     Options:
       --overwrite
       --dry-run
+      --no-callbacks
     """
 )
 

@@ -24,7 +24,7 @@ class Context:
     def emit_from_config(self, config: dict) -> Tuple[str, Any]:
         if config and self.name in config:
             return self.name, config[self.name]
-        elif self.default:
+        elif self.default or self.default == []:
             return self.name, self.default
         else:
             raise MissingConfig(self.name)

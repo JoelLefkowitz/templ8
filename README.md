@@ -2,6 +2,7 @@
 
 Configurable, intelligent project template generator
 
+
 ## Status
 
 | Source     | Shields                                                        |
@@ -35,6 +36,10 @@ Alternatively, you can clone the repo:
 ```bash
 git clone https://github.com/JoelLefkowitz/temp8
 ```
+
+## Usage
+
+templ8 this <3
 
 ## Running tests
 
