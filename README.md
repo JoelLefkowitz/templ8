@@ -39,7 +39,7 @@ git clone https://github.com/JoelLefkowitz/temp8
 
 ## Usage
 
-templ8 this <3
+:purple_heart: templ8 this <3
 
 ## Running tests
 

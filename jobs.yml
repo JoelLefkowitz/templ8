@@ -11,10 +11,11 @@ jobs:
       env-targets:
         - templ8
 
-  dotenv:
-    command: yenv:main
-    env-files:
-      - templ8.env
+  main-env:
+    command: export ${cat templ8.env}
+  
+  template:
+    command: templ8 ./template.yml .
 
   docs:
     command: python setup.py updateDocs
@@ -26,7 +27,7 @@ jobs:
         - build
         - dist
         - templ8.egg-info
-  
+
   pypi-upload:
     function: pypi_upload:main
     context:
@@ -45,4 +46,5 @@ routines:
     - fmt
     - clean
     - docs
+
 

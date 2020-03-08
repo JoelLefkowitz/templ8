@@ -28,7 +28,7 @@ jobs:
         - build
         - dist
         - {{src}}.egg-info
-  
+
   pypi-upload:
     function: pypi_upload:main
     context:
@@ -53,6 +53,9 @@ jobs:
       build_stage_prefix: build
     targets:
       - {{webapp}}
+
+  provision:
+    command: docker-droplet up --domain {{deploy_url}} --project {{name}}
 
   deploy:
     function: deploy:main
@@ -101,8 +104,8 @@ routines:
 {% if webapp %}
   pre-deploy:
     - fmt
-    - clean
     - build
     - multi-stage-build
 
 {% endif %}
+

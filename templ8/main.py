@@ -8,7 +8,9 @@ from glob import iglob
 from jinja2 import Template
 from typing import List, Tuple, Any
 
-from pyimport import path_guard; path_guard(__file__, "..")
+from pyimport import path_guard
+
+path_guard(__file__, "..")
 from manifest import SPECS, CLI
 from exceptions import OutputDirInvalid, ConfigPathInvalid
 from utils import pretty_log
@@ -53,7 +55,7 @@ def main(config: dict, template_dir: str, output_dir: str, options: dict) -> Non
         for callback in spec.callbacks:
             if skipped_any:
                 pretty_log(f"Would callback: {callback.call}")
-            elif options['no_callacks']:
+            elif options["no_callbacks"]:
                 pretty_log(f"Skippig callback: {callback.call}")
             else:
                 callback.run(config, output_dir)
