@@ -4,7 +4,7 @@ import subprocess
 
 from pyimport import path_guard
 
-path_guard(__file__, "..")
+path_guard("..")
 from exceptions import MissingConfig
 from utils import get_child_files, inclusive_relpath
 

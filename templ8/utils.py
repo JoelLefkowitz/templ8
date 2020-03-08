@@ -5,8 +5,13 @@ from typing import Any
 
 
 def pretty_log(msg: str) -> None:
-    TOPHAT = emojize(":tophat:", use_aliases=True)
-    print(f"{TOPHAT}  {msg}")
+    tophat = emojize(":tophat:", use_aliases=True)
+    print(f"{tophat} {msg} {tophat}")
+
+
+def pretty_heading(msg: str) -> None:
+    heart = emojize(":heart:", use_aliases=True)
+    return (f"# {heart} {msg} {heart}")
 
 
 def get_child_files(root):
@@ -22,18 +27,5 @@ def get_child_files(root):
 def inclusive_relpath(target: str, source: str) -> str:
     return os.path.join(os.path.basename(source), os.path.relpath(target, source))
 
-
-def underscore_to_camelcase(name: str) -> str:
-    return re.sub(r"(?!^)_([a-zA-Z])", lambda m: m.group(1).upper(), name)
-
-
-def to_app_name(name: str) -> str:
-    return str(name).replace("-", "_") + "_app"
-
-
-def to_camelcase_app_name(name: str) -> str:
-    return underscore_to_camelcase(to_app_name(name))
-
-
-def to_server_name(name: str) -> str:
-    return str(name).replace("-", "_") + "_server"
+x = pretty_heading("a")
+print(x)
