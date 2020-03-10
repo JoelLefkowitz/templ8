@@ -33,7 +33,6 @@ webapp_spec = Spec(
     root_name="webapp",
     dependencies=["common"],
     context_set=[Context("github_url"), Context("deploy_url")],
-    include_root_dir=True,
     folder_aliases={"webapp": webapp_alias,},
     callbacks=[yarn_callback, angular_callback],
 )
@@ -41,6 +40,5 @@ server_spec = Spec(
     root_name="server",
     dependencies=["webapp"],
     folder_aliases={"server": webserver_alias,},
-    include_root_dir=True,
     callbacks=[django_callback],
 )

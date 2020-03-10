@@ -26,6 +26,3 @@ def get_child_files(root):
 
 def inclusive_relpath(target: str, source: str) -> str:
     return os.path.join(os.path.basename(source), os.path.relpath(target, source))
-
-x = pretty_heading("a")
-print(x)

@@ -1,0 +1,2 @@
+{{ src }}:
+  command: python -m py.test

@@ -19,3 +19,4 @@ angular_callback = Callback(
 django_callback = Callback(
     ["django-admin", "startproject", webserver_alias, webserver_alias]
 )
+readme_callback = Callback(["pandoc", "config.pandoc"])

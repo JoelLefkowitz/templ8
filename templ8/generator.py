@@ -14,8 +14,7 @@ def generate(config: dict, template_dir: str, output_dir: str, options: dict) ->
         for template, output_path in spec.load_templates(
             config, template_dir, output_dir
         ):
-            success = outputt
-        er(template, output_path, context_dict, options)
+            success = outputter(template, output_path, context_dict, options)
             if not success:
                 skipped_any = True
 

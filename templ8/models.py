@@ -64,7 +64,6 @@ class Spec:
     root_name: str
     dependencies: List[str] = field(default_factory=list)
     context_set: List[Context] = field(default_factory=list)
-    include_root_dir: bool = False
     folder_aliases: Dict[str, Alias] = field(default_factory=dict)
     callbacks: List[Callback] = field(default_factory=list)
 

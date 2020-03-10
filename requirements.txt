@@ -9,3 +9,4 @@ docopt>=0.6.1
 emoji>=0.5.4
 dataclasses>=0.7
 pyimport>=0.3.0
+pytest-bdd==3.2.1

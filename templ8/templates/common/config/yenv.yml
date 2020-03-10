@@ -1,4 +1,2 @@
 # Do not commit production credentials to source control!
-
-templ8:
-  
+{{ src }}:

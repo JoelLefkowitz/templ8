@@ -1,0 +1,2 @@
+templ8:
+  command: python -m py.test

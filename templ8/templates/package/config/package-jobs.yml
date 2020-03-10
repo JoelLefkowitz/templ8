@@ -1,0 +1,20 @@
+jobs:
+  docs:
+    command: python setup.py updateDocs
+  
+  pypi-upload:
+    function: pypi_upload:main
+    context:
+      release_type: patch
+      twine_username: {{twine_username}}
+
+  purge:
+    command: purge {{src}} {{twine_username}}
+
+projects:
+  {{src}}:
+    path: {{src}}
+
+meta:
+  project_roots: 
+    - ../../../

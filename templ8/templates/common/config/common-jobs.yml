@@ -1,0 +1,45 @@
+jobs:
+  test:
+    command: polytester --config ./config/tests.yml 
+
+  yenv:
+    command: yenv print <yenv_file> <env-target> dotenv -f -s
+    context:
+      yenv-file: environment.yml
+      env-targets:
+        - {{src}}
+
+  export-env:
+    command: export ${cat {{name}}.env}
+  
+  make-pages:
+    script: pages.bash
+
+  lint:
+    script: lint.bash
+    targets:
+      - all
+  
+  fmt:
+    script: fmt.bash
+    targets:
+      - all
+  
+  trim:
+    script: trim.bash
+    targets:
+      - all
+  
+  template:
+    command: templ8 ./template.yml .
+
+projects:
+  {{src}}:
+    path: {{src}}
+
+meta:
+  script_roots:
+    - ../../scripts
+    
+  project_roots: 
+    - ../../../
