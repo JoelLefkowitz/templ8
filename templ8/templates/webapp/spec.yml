@@ -1,0 +1,32 @@
+root_name: webapp
+
+context_extends:
+  - common
+
+child_context:
+  - webapp:
+    context: name
+    formatter: to_app_name
+  - webapp_camelcase:
+    context: name
+    formatter: to_camelcase_app_name
+
+folder_renames:
+  - webapp: webapp
+
+callbacks:
+  yarn_callback:
+    - ng
+    - config
+    - -g
+    - cli.packageManager
+    - yarn
+
+  angular_callback:
+    - ng
+    - new
+    - --routing=true
+    - --style=scss
+    - <webapp_camelcase>
+    - --directory
+    - <webapp>

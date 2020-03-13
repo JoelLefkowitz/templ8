@@ -1,0 +1,15 @@
+root_name: server
+context_extends:
+  - common
+child_context:
+  - server:
+    context: name
+    formatter: to_server_name
+folder_renames:
+  - server: server
+callbacks:
+  django_callback:
+    - django-admin
+    - startproject
+    - <server>
+    - <server>

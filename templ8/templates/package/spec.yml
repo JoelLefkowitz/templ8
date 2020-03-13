@@ -1,0 +1,17 @@
+root_name: package
+context_extends:
+  - common
+context_set:
+  - author_email
+  - author_github
+  - github_url
+  - twine_username
+  - console_scripts: []
+  - install_requires: []
+  - extra_requirements: []
+child_context:
+  - src:
+    context: name
+    formatter:  hyphen_to_underscore
+folder_renames:
+  - src: src

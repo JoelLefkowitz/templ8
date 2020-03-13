@@ -1,0 +1,7 @@
+root_name: common
+context_set:
+  - name
+  - version: 0.1.0
+  - description
+  - author
+  - readme: No description provided

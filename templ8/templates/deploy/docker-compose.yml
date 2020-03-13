@@ -1,12 +1,11 @@
 version: '3.3'
 
   services:
-    {{webapp}}:
-      image: {{webapp}}:{{version}}
+    {{app}}:
+      image: {{app}}:{{version}}
       ports: 
         - 443:443
 
-{% if server %}
     {{server}}:
       image: {{server}}:{{version}}
       depends_on: 
@@ -18,4 +17,3 @@ version: '3.3'
 
     cache:
       image: memchaced:latest
-{% endif %}
