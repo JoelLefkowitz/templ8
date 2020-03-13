@@ -6,7 +6,7 @@ child_context:
     context: name
     formatter: to_server_name
 folder_renames:
-  - server: server
+  - server: <server>
 callbacks:
   django_callback:
     - django-admin

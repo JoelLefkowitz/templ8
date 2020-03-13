@@ -12,6 +12,6 @@ context_set:
 child_context:
   - src:
     context: name
-    formatter:  hyphen_to_underscore
+    formatter: hyphen_to_underscore
 folder_renames:
-  - src: src
+  - src: <src>
