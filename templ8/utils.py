@@ -1,7 +1,5 @@
-import re
 import os
 from emoji import emojize
-from typing import Any
 
 
 def pretty_log(msg: str) -> None:
@@ -11,7 +9,7 @@ def pretty_log(msg: str) -> None:
 
 def pretty_heading(msg: str) -> None:
     heart = emojize(":heart:", use_aliases=True)
-    return (f"# {heart} {msg} {heart}")
+    return f"# {heart} {msg} {heart}"
 
 
 def get_child_files(root):
@@ -26,3 +24,11 @@ def get_child_files(root):
 
 def inclusive_relpath(target: str, source: str) -> str:
     return os.path.join(os.path.basename(source), os.path.relpath(target, source))
+
+
+def is_tag(string: str) -> bool:
+    return string.startswith("<") and string.endswith(">")
+
+
+def strip_tag(string: str) -> str:
+    return string[1:-1]

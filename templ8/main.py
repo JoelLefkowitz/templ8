@@ -52,7 +52,7 @@ def parser(arguments: dict) -> Tuple[bool, str, str, dict]:
 
     generate, config_path, output_dir = itemgetter(
         "generate", "<config_path>", "<output_dir>"
-        )(arguments)
+    )(arguments)
 
     if not os.path.exists(config_path):
         raise ConfigPathInvalid(config_path)

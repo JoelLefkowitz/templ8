@@ -1,15 +1,15 @@
 import os
 import pathlib
 from subprocess import subprocess, CompletedProcess
-from typing import field, List, Mapping, Optional, Union
+from typing import List, Optional, Tuple, Union
 from dataclasses import dataclass
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
 
 from pyimport import path_guard
 
-path_guard("..")
+path_guard(".", "..")
+from context import Context
 from utils import get_child_files
-from .context import Context
 
 
 @dataclass
@@ -19,7 +19,9 @@ class FolderRename:
 
     def replace(self, string: str) -> str:
         return (
-            string if string != self.name else self.rename.read
+            string
+            if string != self.name
+            else self.rename.read
             if isinstance(self.rename, Context)
             else self.rename
         )
@@ -28,7 +30,7 @@ class FolderRename:
         folder_path, filename = os.path.split(file_path)
         replaced_parts = [self.replace(i) for i in pathlib.Path(folder_path).parts]
         return os.path.join(*replaced_parts, filename)
-            
+
 
 @dataclass
 class Callback:
@@ -62,8 +64,8 @@ class Spec:
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
+            undefined=StrictUndefined,
         )
-
         for file_path in get_child_files(root_path):
             template = loader.get_template(os.path.relpath(file_path, root_path))
             yield template, file_path
@@ -72,3 +74,14 @@ class Spec:
         for rename in self.folder_renames:
             file_path = rename.replace_in_path(file_path)
         return os.path.join(output_dir, file_path)
+
+    def resolve_template(
+        self, template: Template, file_path: str, output_dir: str
+    ) -> None:
+        context_dict = {i: i.read for i in self.context}
+        output = template.resolve(context_dict)
+        output_path = self.resolve_output_path(file_path, output_dir)
+
+        pathlib.Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w") as f:
+            f.write(output)

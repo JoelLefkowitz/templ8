@@ -1,19 +1,13 @@
-import os
-import sys
-import shutil
+def generate_template(
+    config: dict, template_dir: str, output_dir: str, options: dict
+) -> None:
+    pass
 
-from pathlib import Path
-from glob import iglob
-from jinja2 import Template
-from typing import List, Tuple, Any
-from specs import topological_specs as specs
 
-def generate_template(config: dict, template_dir: str, output_dir: str, options: dict) -> None:
-    spec, output_dir
-    for template, file_path in spec.templates:
-        spec.resolve_output_path(file_path, output_dir)
-        template.resolve({k: v.read for k, v in spec.context.items()})
-
+# spec, output_dir
+# for template, file_path in spec.templates:
+#     spec.resolve_output_path(file_path, output_dir)
+#     template.resolve({k: v.read for k, v in spec.context.items()})
 #     for spec in specs:
 
 #         skipped_any = False

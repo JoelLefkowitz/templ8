@@ -3,7 +3,6 @@ from pyimport import path_guard
 path_guard("..")
 from exceptions import MissingConfig
 
-from functools import cached_property
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 
@@ -14,7 +13,7 @@ class Context:
     config: dict
     default: Optional[Any]
 
-    @cached_property
+    @property
     def read(self) -> None:
         if self.name not in self.config and self.default is None:
             raise MissingConfig(self.name)
@@ -28,6 +27,10 @@ class ChildContext(Context):
     parent_context: Context
     formatter: Optional[Callable[[str], str]]
 
-    @cached_property
-    def read(self) -> None: 
-        return self.formatter(self.parent_context.read) if self.formatter else self.parent_context.read
+    @property
+    def read(self) -> None:
+        return (
+            self.formatter(self.parent_context.read)
+            if self.formatter
+            else self.parent_context.read
+        )
