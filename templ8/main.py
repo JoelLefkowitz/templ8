@@ -9,16 +9,17 @@ from typing import Tuple
 from pyimport import path_guard
 
 path_guard("..")
-from template_generator import generate_template
-from config_generator import generate_config
+from template_generator import generate_templates
+from parser import parse_specs, parse_config
+from config_creator import create_config
 from exceptions import OutputDirInvalid, ConfigPathInvalid, InvalidCommand
 
 
 cli = cleandoc(
     """
     Usage:
-      templ8 <config_path> <output_dir> [--overwrite | --dry-run] [--no-callbacks] [NAMES ...]
-      templ8 generate
+      templ8 create <output_dir>
+      templ8 <config_path> <output_dir> [(--overwrite | --dry-run) --no-callbacks NAMES ...]
 
     Options:
       --overwrite
@@ -36,25 +37,24 @@ def entrypoint() -> None:
     except DocoptExit:
         raise InvalidCommand(sys.argv[1:], cli)
 
-    generate, config_path, output_dir, options = parser(arguments)
+    create_new, config_path, output_dir, options = parse_cli(arguments)
 
-    if generate:
-        generate_config()
+    if create_new:
+        create_config(output_dir)
 
     else:
-        with open(config_path, "r") as stream:
-            config = ruamel.yaml.load(stream, Loader=ruamel.yaml.Loader)
+        config, specs = parse_config(config_path), parse_specs(template_dir)
+        print(specs)
+        generate_templates(specs, config, output_dir, options)
 
-        generate_template(config, template_dir, output_dir, options)
 
+def parse_cli(arguments: dict) -> Tuple[bool, str, str, dict]:
 
-def parser(arguments: dict) -> Tuple[bool, str, str, dict]:
-
-    generate, config_path, output_dir = itemgetter(
-        "generate", "<config_path>", "<output_dir>"
+    create_new, config_path, output_dir = itemgetter(
+        "create", "<config_path>", "<output_dir>"
     )(arguments)
 
-    if not os.path.exists(config_path):
+    if not create_new and not os.path.exists(config_path):
         raise ConfigPathInvalid(config_path)
 
     if os.path.isfile(output_dir):
@@ -66,4 +66,8 @@ def parser(arguments: dict) -> Tuple[bool, str, str, dict]:
         "specified_names": arguments["NAMES"],
         "no_callbacks": arguments["--no-callbacks"],
     }
-    return generate, config_path, output_dir, options
+    return create_new, config_path, output_dir, options
+
+
+# Remove
+entrypoint()

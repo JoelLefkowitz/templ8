@@ -1,5 +1,12 @@
-def generate_template(
-    config: dict, template_dir: str, output_dir: str, options: dict
+from typing import List
+from pyimport import path_guard
+
+path_guard("..")
+from spec import Spec
+
+
+def generate_templates(
+    config: dict, specs: List[Spec], output_dir: str, options: dict
 ) -> None:
     pass
 

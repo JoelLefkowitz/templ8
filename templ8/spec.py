@@ -1,15 +1,14 @@
 import os
 import pathlib
-from subprocess import subprocess, CompletedProcess
+import subprocess
 from typing import List, Optional, Tuple, Union
 from dataclasses import dataclass
 from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
-
+from walkman import get_child_files
 from pyimport import path_guard
 
 path_guard(".", "..")
 from context import Context
-from utils import get_child_files
 
 
 @dataclass
@@ -38,7 +37,7 @@ class Callback:
     call: List[Union[str, Context]]
     cwd: Optional[str]
 
-    def run(self, output_path: str) -> CompletedProcess:
+    def run(self, output_path: str) -> subprocess.CompletedProcess:
         call = [i.read if isinstance(i, Context) else i for i in self.call]
         cwd = os.path.join(output_path, self.cwd) if self.cwd else None
         return subprocess.run(call, cwd=cwd)
