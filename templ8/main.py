@@ -33,7 +33,7 @@ def entrypoint() -> None:
         arguments
     )
     config = load_yaml(config_path)
-    specs = [*load_specs(template_dir) for template_dir in template_dirs]
+    specs = sum((load_specs(template_dir) for template_dir in template_dirs), [])
     generate_templates(config, specs, output_dir, specified_files, options)
 
 

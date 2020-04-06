@@ -2,12 +2,12 @@ import re
 import os
 import pathlib
 import subprocess
-from typing import List, Optional, Any, Dict, Iterator, ClassVar
+from typing import List, Optional, Any, Dict, Iterator, Tuple, ClassVar
 from dataclasses import dataclass, field
 
 from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
 from walkman import get_child_files
-
+from collections import namedtuple
 from .exceptions import MissingConfig
 from .utils import format_str, is_kv, get_kv
 
@@ -68,9 +68,9 @@ class Callback:
     call: str
     cwd: Optional[str] = None
 
-    def __call__(self, output_path: str) -> subprocess.CompletedProcess:
+    def __call__(self, output_dir: str) -> subprocess.CompletedProcess:
         call = " ".split(self.call)
-        cwd = os.path.join(output_path, self.cwd) if self.cwd else None
+        cwd = os.path.join(output_dir, self.cwd) if self.cwd else None
         return subprocess.run(call, cwd=cwd)
 
 
@@ -89,6 +89,9 @@ class PathReplacement:
         return os.path.join(*replaced_parts)
 
 
+TemplateProxy = namedtuple("TemplateProxy", ["template", "source_path"])
+
+
 @dataclass
 class Spec:
     name: str
@@ -98,7 +101,7 @@ class Spec:
     callbacks: List[Callback]
 
     @property
-    def templates(self) -> Iterator[Template]:
+    def templates(self) -> Iterator[TemplateProxy]:
         loader = Environment(
             loader=FileSystemLoader(self.root_path),
             trim_blocks=True,
@@ -108,8 +111,12 @@ class Spec:
         )
 
         for file_path in get_child_files(self.root_path):
-            template = loader.get_template(os.path.relpath(file_path, self.root_path))
-            yield template
+            source_path = os.path.relpath(file_path, self.root_path)
+            template = loader.get_template(source_path)
+            yield TemplateProxy(template, source_path)
 
     def sufficient_config(self, config: dict) -> bool:
         return set(self.required_config) <= set(config)
+
+    def include(self, config: Dict) -> bool:
+        return self.name in config and config[self.name] is True
