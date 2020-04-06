@@ -1,0 +1,6 @@
+package_name: pineapples
+author_email: joely@joelman.com
+author_github: github/joely
+twine_username: joely
+install_requires: 
+    - numpy

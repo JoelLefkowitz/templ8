@@ -1,17 +1,15 @@
-root_name: package
+name: package
 context_extends:
   - common
-context_set:
+required_config:
+  - package_name
   - author_email
   - author_github
-  - github_url
   - twine_username
   - console_scripts: []
   - install_requires: []
   - extra_requirements: []
-child_context:
-  - src:
-    context: name
-    formatter: hyphen_to_underscore
-folder_renames:
-  - src: <src>
+path_replacements:
+  - src: <package_name>
+callbacks:
+  - venv: python3 -m venv venv

@@ -1,5 +1,5 @@
-root_name: common
-context_set:
+name: common
+required_config:
   - name
   - version: 0.1.0
   - description

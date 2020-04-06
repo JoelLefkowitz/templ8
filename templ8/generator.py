@@ -1,14 +1,22 @@
-from typing import List
-from pyimport import path_guard
-
-path_guard("..")
-from spec import Spec
+from typing import List, Dict
+from .models import Spec
 
 
 def generate_templates(
-    config: dict, specs: List[Spec], output_dir: str, options: dict
+    config: Dict, specs: List[Spec], output_dir: str, specified_files: List[str], options: Dict
 ) -> None:
     pass
+
+# def resolve_template(
+#     self, template: Template, file_path: str, output_dir: str
+# ) -> None:
+#     context_dict = {i: i.read for i in self.context}
+#     output = template.resolve(context_dict)
+
+#     output_path = self.resolve_output_path(file_path, output_dir)
+#     pathlib.Path(os.path.dirname(output_path)).mkdir(parents=True, exist_ok=True)
+#     with open(output_path, "w") as f:
+#         f.write(output)
 
 
 # spec, output_dir
