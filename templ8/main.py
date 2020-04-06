@@ -29,9 +29,11 @@ def entrypoint() -> None:
     except DocoptExit:
         raise InvalidCommand(sys.argv[1:], cli)
 
-    config_path, output_dir, template_dirs, specified_files, options = parse_cli(arguments)
+    config_path, output_dir, template_dirs, specified_files, options = parse_cli(
+        arguments
+    )
     config = load_yaml(config_path)
-    specs = [load_specs(template_dir) for template_dir in template_dirs]
+    specs = [*load_specs(template_dir) for template_dir in template_dirs]
     generate_templates(config, specs, output_dir, specified_files, options)
 
 

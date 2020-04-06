@@ -12,7 +12,7 @@ from yummy_cereal import (
 from .models import Spec
 
 
-def load_specs(template_dir: str) -> dict:
+def load_specs(template_dir: str) -> List[Spec]:
     context_parser = AnnotationsParser()
 
     folder_renames_parser = AnnotationsParser()
@@ -25,10 +25,10 @@ def load_specs(template_dir: str) -> dict:
         child_parsers={"context": None, "folder_renames": None, "callbacks": None,},
     )
 
-    return {
-        path: spec_parser(load_yaml(path))
+    return [
+        spec_parser(load_yaml(path))
         for path in get_child_files(template_dir, "spec.yml", 1)
-    }
+    ]
 
 
 def load_yaml(path: str) -> Any:

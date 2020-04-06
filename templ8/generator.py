@@ -3,9 +3,14 @@ from .models import Spec
 
 
 def generate_templates(
-    config: Dict, specs: List[Spec], output_dir: str, specified_files: List[str], options: Dict
+    config: Dict,
+    specs: List[Spec],
+    output_dir: str,
+    specified_files: List[str],
+    options: Dict,
 ) -> None:
     pass
+
 
 # def resolve_template(
 #     self, template: Template, file_path: str, output_dir: str
