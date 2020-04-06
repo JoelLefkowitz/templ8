@@ -19,3 +19,10 @@ class InvalidCommand(Exception):
 class ConfigPathInvalid(Exception):
     def __init__(self, path: str) -> None:
         super().__init__(f"\n\nInvalid configuration path: {path}")
+
+
+class UnrecognisedFormatter(Exception):
+    def __init__(self, string: str, formatter: str) -> None:
+        super().__init__(
+            f"\n\nCould not parse {string} using {formatter}\n '{formatter}' Not found"
+        )

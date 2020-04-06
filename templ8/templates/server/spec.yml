@@ -1,15 +1,13 @@
 root_name: server
-context_extends:
+
+required_config:
+  - backend_name
+
+required_config_extends:
   - common
-child_context:
-  - server:
-    context: name
-    formatter: to_server_name
-folder_renames:
-  - server: <server>
+
+path_replacements:
+  - backend: <backend_name>
+
 callbacks:
-  django_callback:
-    - django-admin
-    - startproject
-    - <server>
-    - <server>
+  django_callback: django-admin startproject <backend_name> <backend_name>

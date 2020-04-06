@@ -2,64 +2,64 @@ import re
 import os
 import pathlib
 import subprocess
-from typing import List, Optional, Any, Dict, Iterator
-from dataclasses import dataclass
+from typing import List, Optional, Any, Dict, Iterator, ClassVar
+from dataclasses import dataclass, field
 
 from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
 from walkman import get_child_files
-from exceptions import MissingConfig
+
+from .exceptions import MissingConfig
+from .utils import format_str, is_kv, get_kv
 
 
 @dataclass
-class Formatter:
+class ContextString:
     string: str
-    prefix: Optional[str] = None
-    suffix: Optional[str] = None
+    re_tag: ClassVar[str] = r"<[^<>]*>"
+
+    def __call__(self, config: Dict) -> str:
+        return re.sub(
+            self.re_tag, lambda x: self.resolve(x.group(0), config), self.string
+        )
+
+    def resolve(self, string: str, config: Dict) -> str:
+        context = Context.from_string(string)
+        return context(config)
 
     @property
-    def hyphen_to_underscore(self) -> str:
-        return str(self.string).replace("-", "_")
-
-    @property
-    def underscore_to_hyphen(self) -> str:
-        return str(self.string).replace("_", "-")
-
-    @property
-    def camelcase(self) -> str:
-        return re.sub(r"(?!^)_([a-zA-Z])", lambda m: m.group(1).upper(), self.string)
-
-    @property
-    def add_prefix(self) -> str:
-        return self.prefix + "_" + self.string if self.prefix else self.string
-
-    @property
-    def add_suffix(self) -> str:
-        return self.string + "_" + self.suffix if self.suffix else self.string
+    def tags(self) -> List[str]:
+        return [tag[1:-1] for tag in re.findall(self.re_tag, self.string)]
 
 
 @dataclass
 class Context:
-    string: str
-    defaults: Optional[Dict] = None
+    name: str
+    default: Any = None
+    formatter: Optional[str] = None
+    formatter_kwargs: Dict = field(default_factory=dict)
 
-    @property
-    def tags(self) -> List[str]:
-        re_tag = r"<[^<>]*>"
-        return [tag[1:-1] for tag in re.findall(re_tag, self.string)]
+    @staticmethod
+    def from_string(string: str) -> Context:
+        string_parts = string[1:-1].split(" ")
+        name = string_parts.pop()
+        kwargs = dict([i.split("=") for i in string_parts if is_kv(i)])
+        default = kwargs.pop("default", None)
+        formatter = kwargs.pop("formatter", None)
+        return Context(name, default, formatter, kwargs)
 
     def __call__(self, config: Dict) -> str:
-        re_tag = r"<[^<>]*>"
-        return re.sub(
-            re_tag, lambda x: self.lookup(x.group(0)[1:-1], config), self.string
-        )
-
-    def lookup(self, string: str, config: Dict) -> str:
-        if string in config:
-            return str(config[string])
-        elif self.defaults and string in self.defaults:
-            return str(self.defaults[string])
+        if self.name in config:
+            lookup = str(config[self.name])
+        elif self.default:
+            lookup = str(self.default)
         else:
-            raise MissingConfig(string, config)
+            raise MissingConfig(self.name, config)
+
+        return (
+            format_str(lookup, self.formatter, **self.formatter_kwargs)
+            if self.formatter
+            else lookup
+        )
 
 
 @dataclass

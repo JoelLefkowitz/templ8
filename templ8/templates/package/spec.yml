@@ -1,6 +1,5 @@
 name: package
-context_extends:
-  - common
+
 required_config:
   - package_name
   - author_email
@@ -9,7 +8,12 @@ required_config:
   - console_scripts: []
   - install_requires: []
   - extra_requirements: []
+
+required_config_extends:
+  - common
+
 path_replacements:
-  - src: <package_name>
+  - src: <package_name formatter=hyphen_to_underscore>
+
 callbacks:
   - venv: python3 -m venv venv

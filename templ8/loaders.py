@@ -13,10 +13,10 @@ from .models import Spec
 
 
 def load_specs(template_dir: str) -> List[Spec]:
-    context_parser = AnnotationsParser()
 
+    # TODO
+    required_config_parser = None
     folder_renames_parser = AnnotationsParser()
-
     callbacks_parser = AnnotationsParser()
 
     spec_parser = AnnotationsParser(
