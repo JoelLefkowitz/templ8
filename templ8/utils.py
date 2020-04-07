@@ -2,7 +2,10 @@ import re
 import os
 from emoji import emojize
 from typing import Optional, Tuple
-from .exceptions import UnrecognisedFormatter
+from pyimport import path_guard
+
+path_guard("..")
+from exceptions import UnrecognisedFormatter
 
 
 def pretty_log(msg: str) -> None:
@@ -46,4 +49,9 @@ def format_str(
 
 
 def is_kv(string: str) -> bool:
-    return re.match("\w+=[^=]+", string)
+    return re.match("\w+=[^=]+", string) is not None
+
+
+def get_kv(string: str) -> Tuple[str, str]:
+    k, v = string.split("=", 1)
+    return (k, v)

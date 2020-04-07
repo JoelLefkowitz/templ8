@@ -1,10 +1,14 @@
 import os, pathlib, functools
 from typing import List, Dict
-from .models import Spec
-from .utils import pretty_log
+from pyimport import path_guard
+
+path_guard("..")
+from models import Spec
+from utils import pretty_log
 from collections import namedtuple
 
 Summary = namedtuple("Summary", ["generated", "skipped"])
+
 
 def generate_templates(
     config: Dict,
@@ -13,13 +17,13 @@ def generate_templates(
     specified_files: List[str],
     options: Dict,
 ) -> None:
-
     for spec in filter(lambda x: x.include(config), specs):
         summary = Summary(generated=[], skipped=[])
-        
+
         for proxy in spec.templates:
             template, source_path = proxy
             output = template.render(config)
+
             processed_path = functools.reduce(
                 lambda res, f: f(res), spec.path_replacements, source_path
             )
@@ -58,14 +62,20 @@ def generate_templates(
 
         for callback in spec.callbacks:
             if summary.skipped:
-                pretty_log(f"Skipping {callback.name} - Didn\'t generate entire spec\n{callback.call}")
+                pretty_log(
+                    f"Skipping {callback.name} - Didn't generate entire spec\n{callback.call}"
+                )
 
             elif options["no_callbacks"]:
-                pretty_log(f"Skipping {callback.name} - Callbacks skipped\n{callback.call}")
+                pretty_log(
+                    f"Skipping {callback.name} - Callbacks skipped\n{callback.call}"
+                )
 
             else:
                 pretty_log(f"Running {callback.name}\n{callback.call}")
                 callback(output_dir)
 
-        generated, skipped = '\n'.join(summary.generated), '\n'.join(summary.skipped)
-        pretty_log(f"Summary - {spec.name}:\nGenerated: {generated}\nSkipped: {skipped}")
+        generated, skipped = "\n".join(summary.generated), "\n".join(summary.skipped)
+        pretty_log(
+            f"Summary - {spec.name}:\nGenerated: {generated}\nSkipped: {skipped}"
+        )

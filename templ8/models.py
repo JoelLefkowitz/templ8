@@ -2,14 +2,19 @@ import re
 import os
 import pathlib
 import subprocess
-from typing import List, Optional, Any, Dict, Iterator, Tuple, ClassVar
+from typing import List, Optional, Type, Any, Dict, Iterator, Tuple, ClassVar, TypeVar
 from dataclasses import dataclass, field
 
+from pyimport import path_guard
+
+path_guard("..")
 from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
 from walkman import get_child_files
 from collections import namedtuple
-from .exceptions import MissingConfig
-from .utils import format_str, is_kv, get_kv
+from exceptions import MissingConfig
+from utils import format_str, is_kv, get_kv
+
+T = TypeVar("T")
 
 
 @dataclass
@@ -21,6 +26,9 @@ class ContextString:
         return re.sub(
             self.re_tag, lambda x: self.resolve(x.group(0), config), self.string
         )
+
+    def __repr__(self) -> str:
+        return self.string
 
     def resolve(self, string: str, config: Dict) -> str:
         context = Context.from_string(string)
@@ -36,16 +44,16 @@ class Context:
     name: str
     default: Any = None
     formatter: Optional[str] = None
-    formatter_kwargs: Dict = field(default_factory=dict)
+    formatter_kwargs: Optional[Dict[str, Any]] = None
 
-    @staticmethod
-    def from_string(string: str) -> Context:
+    @classmethod
+    def from_string(cls: Type[T], string: str) -> T:
         string_parts = string[1:-1].split(" ")
         name = string_parts.pop()
-        kwargs = dict([i.split("=") for i in string_parts if is_kv(i)])
+        kwargs = dict([get_kv(i) for i in string_parts if is_kv(i)])
         default = kwargs.pop("default", None)
         formatter = kwargs.pop("formatter", None)
-        return Context(name, default, formatter, kwargs)
+        return cls(name, default, formatter, formatter_kwargs=kwargs or None)
 
     def __call__(self, config: Dict) -> str:
         if self.name in config:
@@ -61,6 +69,9 @@ class Context:
             else lookup
         )
 
+    def __repr__(self) -> str:
+        return self.name
+
 
 @dataclass
 class Callback:
@@ -73,20 +84,25 @@ class Callback:
         cwd = os.path.join(output_dir, self.cwd) if self.cwd else None
         return subprocess.run(call, cwd=cwd)
 
+    def __repr__(self) -> str:
+        return str({self.name: self.call})
+
 
 @dataclass
 class PathReplacement:
     name: str
-    before: str
-    after: str
+    replacement: str
 
     def __call__(self, file_path: str, exclude_head: bool = False) -> str:
         file_parts = pathlib.Path(file_path).parts
-        replaced_parts = [self.after if i == self.before else i for i in file_parts]
+        replaced_parts = [self.replacement if i == self.name else i for i in file_parts]
 
         if exclude_head:
             replaced_parts[-1] = os.path.split(file_path)[1]
         return os.path.join(*replaced_parts)
+
+    def __repr__(self) -> str:
+        return str({self.name: self.replacement})
 
 
 TemplateProxy = namedtuple("TemplateProxy", ["template", "source_path"])
@@ -96,9 +112,10 @@ TemplateProxy = namedtuple("TemplateProxy", ["template", "source_path"])
 class Spec:
     name: str
     root_path: str
-    required_config: List[str]
-    path_replacements: List[PathReplacement]
-    callbacks: List[Callback]
+    required_context: List[str] = field(default_factory=list)
+    required_context_extends: List[str] = field(default_factory=list)
+    path_replacements: List[PathReplacement] = field(default_factory=list)
+    callbacks: List[Callback] = field(default_factory=list)
 
     @property
     def templates(self) -> Iterator[TemplateProxy]:
@@ -120,3 +137,6 @@ class Spec:
 
     def include(self, config: Dict) -> bool:
         return self.name in config and config[self.name] is True
+
+    def __str__(self) -> str:
+        return str(self.__dict__)

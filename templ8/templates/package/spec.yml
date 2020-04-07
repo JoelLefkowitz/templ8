@@ -1,19 +1,19 @@
 name: package
 
-required_config:
-  - package_name
-  - author_email
-  - author_github
-  - twine_username
-  - console_scripts: []
-  - install_requires: []
-  - extra_requirements: []
+required_context:
+  package_name:
+  author_email:
+  author_github:
+  twine_username:
+  console_scripts: []
+  install_requires: []
+  extra_requirements: []
 
-required_config_extends:
+required_context_extends:
   - common
 
 path_replacements:
-  - src: <package_name formatter=hyphen_to_underscore>
+  src: <package_name formatter=hyphen_to_underscore>
 
 callbacks:
-  - venv: python3 -m venv venv
+   venv: python3 -m venv venv
