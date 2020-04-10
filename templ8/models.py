@@ -79,8 +79,8 @@ class Callback:
     cwd: Optional[str] = None
 
     def __call__(self, output_dir: str) -> subprocess.CompletedProcess:
-        call = " ".split(self.call)
-        cwd = os.path.join(output_dir, self.cwd) if self.cwd else None
+        call = self.call.split(" ")
+        cwd = os.path.join(output_dir, self.cwd) if self.cwd else output_dir
         return subprocess.run(call, cwd=cwd)
 
     def __repr__(self) -> str:
@@ -128,7 +128,11 @@ class Spec:
             undefined=StrictUndefined,
         )
     
-        for file_path in get_child_files(template_base):    
+        for file_path in get_child_files(template_base):
+
+            if file_path == self.root_path:
+                continue
+
             source_path = os.path.relpath(file_path, template_base)
             template = loader.get_template(source_path)
             yield TemplateProxy(template, source_path)

@@ -4,7 +4,7 @@ jobs:
     context:
       yenv-file: environment.yml
       env-targets:
-        - {{src}}
+        - {{name}}
 
   export-env:
     command: export ${cat {{name}}.env}
@@ -13,8 +13,8 @@ jobs:
     command: templ8 ./template.yml .
 
 projects:
-  {{src}}:
-    path: {{src}}
+  {{name}}:
+    path: {{name}}
 
 meta:
   script_root: ../../scripts/

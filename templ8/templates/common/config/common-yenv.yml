@@ -1,2 +1,2 @@
 # Do not commit production credentials to source control!
-{{ src }}:
+{{ name }}:

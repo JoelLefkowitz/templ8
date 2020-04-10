@@ -39,6 +39,9 @@ def entrypoint() -> None:
 
     config = load_yaml(config_path)
     specs = load_specs(template_dirs)
+
+    # TODO Load default context values into config
+    # TODO Check nominal config is sufficient
     specs = [spec for spec in specs if spec.check_condition(config)]
     for spec in specs:
         spec.decode(config)
