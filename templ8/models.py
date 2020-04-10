@@ -11,32 +11,10 @@ path_guard("..")
 from jinja2 import Environment, FileSystemLoader, Template, StrictUndefined
 from walkman import get_child_files
 from collections import namedtuple
-from exceptions import MissingConfig
+from exceptions import MissingContext
 from utils import format_str, is_kv, get_kv
 
 T = TypeVar("T")
-
-
-@dataclass
-class ContextString:
-    string: str
-    re_tag: ClassVar[str] = r"<[^<>]*>"
-
-    def __call__(self, config: Dict) -> str:
-        return re.sub(
-            self.re_tag, lambda x: self.resolve(x.group(0), config), self.string
-        )
-
-    def __repr__(self) -> str:
-        return self.string
-
-    def resolve(self, string: str, config: Dict) -> str:
-        context = Context.from_string(string)
-        return context(config)
-
-    @property
-    def tags(self) -> List[str]:
-        return [tag[1:-1] for tag in re.findall(self.re_tag, self.string)]
 
 
 @dataclass
@@ -46,31 +24,52 @@ class Context:
     formatter: Optional[str] = None
     formatter_kwargs: Optional[Dict[str, Any]] = None
 
-    @classmethod
-    def from_string(cls: Type[T], string: str) -> T:
-        string_parts = string[1:-1].split(" ")
-        name = string_parts.pop()
-        kwargs = dict([get_kv(i) for i in string_parts if is_kv(i)])
-        default = kwargs.pop("default", None)
-        formatter = kwargs.pop("formatter", None)
-        return cls(name, default, formatter, formatter_kwargs=kwargs or None)
-
     def __call__(self, config: Dict) -> str:
         if self.name in config:
             lookup = str(config[self.name])
         elif self.default:
             lookup = str(self.default)
         else:
-            raise MissingConfig(self.name, config)
+            raise MissingContext(self.name, config)
 
         return (
-            format_str(lookup, self.formatter, **self.formatter_kwargs)
+            format_str(lookup, self.formatter, **self.formatter_kwargs or {})
             if self.formatter
             else lookup
         )
 
     def __repr__(self) -> str:
         return self.name
+
+    def encode(self) -> str:
+        kwargs = []
+        if self.default:
+            kwargs.append(f"default={self.default}")
+
+        if self.formatter:
+            kwargs.append(f"formatter={self.formatter}")
+
+        if self.formatter_kwargs:
+            kwargs.append(
+                " ".join([f"{k}={v}" for k, v in self.formatter_kwargs.items()])
+            )
+
+        return "<" + self.name + " ".join(kwargs) + ">"
+
+    @classmethod
+    def resolve_in_str(cls: Type[T], string: str, config: Dict) -> str:
+        re_tag = r"<[^<>]*>"
+        return re.sub(re_tag, lambda x: cls.decode(x.group(0))(config), string)
+
+    @classmethod
+    def decode(cls: Type[T], string: str) -> T:
+        string_parts = string[1:-1].split(" ")
+        name = string_parts.pop(0)
+        kwargs = dict([get_kv(i) for i in string_parts if is_kv(i)])
+        default = kwargs.pop("default", None)
+        formatter = kwargs.pop("formatter", None)
+        formatter_kwargs = kwargs or None
+        return cls(name, default, formatter, formatter_kwargs)
 
 
 @dataclass
@@ -85,7 +84,7 @@ class Callback:
         return subprocess.run(call, cwd=cwd)
 
     def __repr__(self) -> str:
-        return str({self.name: self.call})
+        return str(self.__dict__)
 
 
 @dataclass
@@ -102,7 +101,7 @@ class PathReplacement:
         return os.path.join(*replaced_parts)
 
     def __repr__(self) -> str:
-        return str({self.name: self.replacement})
+        return str(self.__dict__)
 
 
 TemplateProxy = namedtuple("TemplateProxy", ["template", "source_path"])
@@ -119,24 +118,35 @@ class Spec:
 
     @property
     def templates(self) -> Iterator[TemplateProxy]:
+        template_base = os.path.dirname(self.root_path)
+
         loader = Environment(
-            loader=FileSystemLoader(self.root_path),
+            loader=FileSystemLoader(template_base),
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
             undefined=StrictUndefined,
         )
-
-        for file_path in get_child_files(self.root_path):
-            source_path = os.path.relpath(file_path, self.root_path)
+    
+        for file_path in get_child_files(template_base):    
+            source_path = os.path.relpath(file_path, template_base)
             template = loader.get_template(source_path)
             yield TemplateProxy(template, source_path)
 
-    def sufficient_config(self, config: dict) -> bool:
-        return set(self.required_config) <= set(config)
+    def check_sufficient(self, config: Dict) -> bool:
+        return set(self.required_context) <= set(config)
 
-    def include(self, config: Dict) -> bool:
+    def check_condition(self, config: Dict) -> bool:
         return self.name in config and config[self.name] is True
+
+    def decode(self, config) -> None:
+        if self.path_replacements:
+            for pr in self.path_replacements:
+                pr.replacement = Context.resolve_in_str(pr.replacement, config)
+
+        if self.callbacks:
+            for cb in self.callbacks:
+                cb.call = Context.resolve_in_str(cb.call, config)
 
     def __str__(self) -> str:
         return str(self.__dict__)

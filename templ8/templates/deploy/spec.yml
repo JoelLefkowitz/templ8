@@ -1,6 +1,0 @@
-root_name: deploy
-context_extends:
-  - webapp
-  - server
-context_set:
-  - deploy_url

@@ -1,6 +1,7 @@
 #!/bin/bash
+# Run pytest-bdd generate on all *.feature files
 
-# compgen to handle cases with no matches
+# Compgen to handle cases with no matches
 matching_files=$(compgen -G "$(pwd)/*.feature")
 
 for file in $matching_files; do

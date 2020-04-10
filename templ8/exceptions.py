@@ -1,12 +1,21 @@
 from typing import Dict, List
 
 
-class MissingConfig(Exception):
-    def __init__(self, string: str, config: Dict) -> None:
-        super().__init__(f"\n\nMissing config: {string} not found in config file")
+class MissingContext(Exception):
+    def __init__(self, context: str, config: Dict) -> None:
+        super().__init__(
+            f"\n\nMissing context: {context}\nNot found in config: {config}"
+        )
 
 
-class OutputDirInvalid(Exception):
+class RuntimeContextError(Exception):
+    def __init__(self, failed_evaluation: str, config: Dict) -> None:
+        super().__init__(
+            f"\n\nFailed to evaluate context: {failed_evaluation}\nConfig: {config}"
+        )
+
+
+class InvalidOutputDir(Exception):
     def __init__(self, path: str) -> None:
         super().__init__(f"\n\nInvalid output directory: {path}")
 
@@ -16,13 +25,13 @@ class InvalidCommand(Exception):
         super().__init__(f"\n\nInvalid command: {command}\n\n{cli}")
 
 
-class ConfigPathInvalid(Exception):
+class InvalidConfigPath(Exception):
     def __init__(self, path: str) -> None:
         super().__init__(f"\n\nInvalid configuration path: {path}")
 
 
-class UnrecognisedFormatter(Exception):
+class InvalidFormatter(Exception):
     def __init__(self, string: str, formatter: str) -> None:
         super().__init__(
-            f"\n\nCould not parse {string} using {formatter}\n '{formatter}' Not found"
+            f"\n\nCould not parse context: {string}\nFormatter not found:{formatter}"
         )

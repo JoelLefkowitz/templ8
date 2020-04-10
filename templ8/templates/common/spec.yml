@@ -5,4 +5,5 @@ required_config:
   - version: 0.1.0
   - description
   - author
-  - readme: No description provided
+  - private: False
+  - readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"

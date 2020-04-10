@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 from pyimport import path_guard
 
 path_guard("..")
-from exceptions import UnrecognisedFormatter
+from exceptions import InvalidFormatter
 
 
 def pretty_log(msg: str) -> None:
@@ -45,7 +45,7 @@ def format_str(
         return string + "_" + suffix if suffix else string
 
     else:
-        raise UnrecognisedFormatter(string, formatter)
+        raise InvalidFormatter(string, formatter)
 
 
 def is_kv(string: str) -> bool:

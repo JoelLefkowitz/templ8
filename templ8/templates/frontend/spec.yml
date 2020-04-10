@@ -1,0 +1,15 @@
+name: frontend
+
+required_context:
+  frontend_name:
+
+required_context_extends:
+  - common
+
+path_replacements:
+  - frontend: <frontend_name>
+
+callbacks:
+  - yarn_callback: ng config -g cli.packageManager yarn
+
+  - angular_callback: ng new --routing=true --style=scss <frontend formatter=camelcase> --directory <frontend>

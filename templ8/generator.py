@@ -1,11 +1,13 @@
 import os, pathlib, functools
 from typing import List, Dict
 from pyimport import path_guard
+from jinja2.exceptions import TemplateSyntaxError
 
 path_guard("..")
 from models import Spec
 from utils import pretty_log
 from collections import namedtuple
+from exceptions import RuntimeContextError
 
 Summary = namedtuple("Summary", ["generated", "skipped"])
 
@@ -17,12 +19,16 @@ def generate_templates(
     specified_files: List[str],
     options: Dict,
 ) -> None:
-    for spec in filter(lambda x: x.include(config), specs):
+    for spec in specs:
         summary = Summary(generated=[], skipped=[])
 
         for proxy in spec.templates:
             template, source_path = proxy
-            output = template.render(config)
+
+            try:
+                output = template.render(config)
+            except TemplateSyntaxError as error:
+                raise RuntimeContextError(error)
 
             processed_path = functools.reduce(
                 lambda res, f: f(res), spec.path_replacements, source_path
@@ -32,8 +38,8 @@ def generate_templates(
             output_path = os.path.join(output_dir, processed_path)
 
             if (
-                options["specified_files"]
-                and file_name not in options["specified_files"]
+                specified_files
+                and file_name not in specified_files
             ):
                 pretty_log(f"Skipping {output_path} - Not in specified files")
                 summary.skipped.append(output_path)
