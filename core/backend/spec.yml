@@ -1,0 +1,14 @@
+name: backend
+
+config:
+  backend_name:
+
+extends:
+  - common
+
+path_replacements:
+  server: <backend_name>
+
+callbacks:
+  django: django-admin startproject <backend_name> <backend_name>
+

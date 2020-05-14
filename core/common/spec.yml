@@ -1,0 +1,14 @@
+name: common
+
+config:
+  name:
+  canonical_name:
+  version: 0.1.0
+  description:
+  author:
+  keywords: []
+  private: False
+  install_requires: []
+  extra_requirements: {}
+  console_scripts: {}
+  

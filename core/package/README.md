@@ -1,6 +1,6 @@
-# templ8
+# {{ canonical_name }}
 
-Configurable, intelligent project template generator
+{{ description }}
 
 ### Status
 
@@ -16,14 +16,14 @@ Configurable, intelligent project template generator
 To install the package from pypi:
 
 ```bash
-pip install templ8
+pip install {{ package_name }}
 ```
 
 Alternatively, you can clone the repo and build the package locally.
 
 ### Docs
 
-Examples and additional details are available in the [full documentation](https://templ8.readthedocs.io/en/latest/).
+Examples and additional details are available in the [full documentation](https://{{ name }}.readthedocs.io/en/latest/).
 
 To generate the documentation locally:
 
@@ -63,7 +63,7 @@ Releases are made on every major change.
 
 ### Author
 
-- **Joel Lefkowitz** - _Initial work_ - [Joel Lefkowitz](https://github.com/JoelLefkowitz)
+- **{{author}}** - _Initial work_ - [{{author}}](https://github.com/{{ github_username }})
 
 See also the list of contributors who participated in this project.
 
@@ -77,15 +77,13 @@ None yet!
 
 <!--- Table links --->
 
-[license]: https://img.shields.io/github/license/joellefkowitz/templ8
-[release]: https://img.shields.io/github/v/tag/joellefkowitz/templ8
-[pypi_downloads]: https://img.shields.io/pypi/dw/templ8
+[license]: https://img.shields.io/github/license/{{ github_username }}/{{ name }}
+[issues]: https://img.shields.io/github/issues/{{ github_username }}/{{ name }} "Issues"
+[issues_link]: https://github.com/{{ github_username}}/{{ name }}/issues
+[pulls]: https://img.shields.io/github/issues-pr/j{{ github_username }}/{{ name }} "Pull requests"
+[pulls_link]: https://github.com/{{ github_username }}/{{ name }}/pulls
 
-[pypi]: https://img.shields.io/pypi/v/templ8 "PyPi"
-[pypi_link]: https://pypi.org/project/templ8
-
-[issues]: https://img.shields.io/github/issues/joellefkowitz/templ8 "Issues"
-[issues_link]: https://github.com/JoelLefkowitz/templ8/issues
-
-[pulls]: https://img.shields.io/github/issues-pr/joellefkowitz/templ8 "Pull requests"
-[pulls_link]: https://github.com/JoelLefkowitz/templ8/pulls
+[release]: https://img.shields.io/github/v/tag/{{ github_username }}/{{ name }}
+[pypi_downloads]: https://img.shields.io/pypi/dw/{{ package_name }}
+[pypi]: https://img.shields.io/pypi/v/{{ package_name }} "PyPi"
+[pypi_link]: https://pypi.org/project/{{ package_name }}

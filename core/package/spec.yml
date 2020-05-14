@@ -1,0 +1,16 @@
+name: package
+
+config:
+  package_name:
+  author_email:
+  github_username:
+  twine_username:
+
+extends:
+  - common
+
+path_replacements:
+  src: <package_name>
+
+callbacks:
+   venv: python3 -m venv venv

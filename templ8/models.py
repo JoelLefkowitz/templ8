@@ -127,7 +127,7 @@ class Spec:
             keep_trailing_newline=True,
             undefined=StrictUndefined,
         )
-    
+
         for file_path in get_child_files(template_base):
 
             if file_path == self.root_path:

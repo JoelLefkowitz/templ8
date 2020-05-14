@@ -1,0 +1,14 @@
+name: frontend
+
+config:
+  frontend_name:
+  deploy_url:
+
+extends:
+  - common
+
+path_replacements:
+  webapp: <frontend_name>
+
+callbacks:
+  angular: ng new --routing=true --style=scss <frontend_name> --directory <frontend_name>
