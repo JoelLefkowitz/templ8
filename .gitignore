@@ -1,4 +1,4 @@
-__pycache__/
+\__pycache__/
 __pypackages__/
 !.vscode/extensions.json
 !.vscode/launch.json
@@ -31,6 +31,7 @@ __pypackages__/
 .settings/
 .spyderproject
 .spyproject
+.test_report.html
 .tox/
 .venv
 .vscode/*
@@ -100,3 +101,4 @@ venv.bak/
 venv/
 wheels/
 yarn-error.log
+

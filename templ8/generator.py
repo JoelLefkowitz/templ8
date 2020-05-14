@@ -37,10 +37,7 @@ def generate_templates(
             file_name = os.path.basename(os.path.normpath(processed_path))
             output_path = os.path.join(output_dir, processed_path)
 
-            if (
-                specified_files
-                and file_name not in specified_files
-            ):
+            if specified_files and file_name not in specified_files:
                 pretty_log(f"Skipping {output_path} - Not in specified files")
                 summary.skipped.append(output_path)
 
