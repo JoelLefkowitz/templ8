@@ -2,11 +2,20 @@ from setuptools import setup
 
 if __name__ == "__main__":
     setup(
-        install_requires=["dataclasses", "pyimport"],
+        install_requires=[
+            "dataclasses",
+            "pyimport",
+            "ruamel.yaml",
+            "docopts",
+            "jinja2",
+            "emoji",
+            "yummy_cereal",
+        ],
         extras_require={
             "dist": ["wheel", "twine", "bump2version"],
             "docs": [
                 "sphinx",
+                "pyimport",
                 "pypandoc",
                 "sphinxcontrib.apidoc",
                 "sphinxcontrib.pandoc_markdown",
@@ -19,6 +28,7 @@ if __name__ == "__main__":
                 "pytest-html",
                 "pytest-sugar",
                 "pytest-bdd",
+                "pytest-watch",
             ],
         },
     )
