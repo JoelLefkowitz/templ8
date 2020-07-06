@@ -1,5 +1,5 @@
 from dataclases import dataclass
-from typing import Optional 
+from typing import Optional
 import subprocess
 
 

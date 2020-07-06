@@ -1,76 +1,50 @@
-# TODO Redesign generator
-# import os, pathlib, functools
-# from typing import List, Dict
-# from pyimport import path_guard
-# from jinja2.exceptions import TemplateSyntaxError
+from walkmate import get_child_files
+from cli import TemplaterOptions, TemplaterScheme
+from context import Context
+from exceptions import ConfigTypeError
+from spec import Spec
+from typing import List, Any
+from yummy_cereal import AnnotationsParser
+import ruamel.yaml
 
-# def generate_templates(
-#     config: Dict,
-#     specs: List[Spec],
-#     output_dir: str,
-#     specified_files: List[str],
-#     options: Dict,
-# ) -> None:
-#     for spec in specs:
-#         summary = Summary(generated=[], skipped=[])
 
-#         for proxy in spec.templates:
-#             template, source_path = proxy
+def collect_context(templater_scheme: TemplaterScheme) -> List[Context]:
+    config = load_yaml(templater_scheme.config_path)
+    
+    try:
+        context = [Context(name, value) for name, value in config.items()]
+    
+    except TypeError:
+        raise ConfigTypeError()
 
-#             try:
-#                 output = template.render(config)
-#             except TemplateSyntaxError as error:
-#                 raise RuntimeContextError(error)
+    return context
 
-#             processed_path = functools.reduce(
-#                 lambda res, f: f(res), spec.path_replacements, source_path
-#             )
 
-#             file_name = os.path.basename(os.path.normpath(processed_path))
-#             output_path = os.path.join(output_dir, processed_path)
+def collect_specs(templater_scheme: TemplaterScheme, context: Context) -> List[Spec]:
+    spec_parser = AnnotationsParser(Spec)
+    return [
+        spec_parser(load_yaml(spec_path))
+        for template_dir in templater_scheme.template_dirs
+        for spec_path in get_child_files(template_dir, match_name="spec.yml")
+    ]
 
-#             if specified_files and file_name not in specified_files:
-#                 pretty_log(f"Skipping {output_path} - Not in specified files")
-#                 summary.skipped.append(output_path)
 
-#             elif os.path.exists(output_path) and not options["overwrite"]:
-#                 pretty_log(f"Skipping {output_path} - File already exists")
-#                 summary.skipped.append(output_path)
+def plan_templates(
+    templater_scheme: TemplaterScheme,
+    templater_options: TemplaterOptions,
+    specs: List[Spec],
+) -> None:
+    pass
 
-#             elif options["dry-run"]:
-#                 pretty_log(f"Dry run - would write: {output_path}")
-#                 summary.skipped.append(output_path)
 
-#             else:
-#                 pathlib.Path(os.path.dirname(output_path)).mkdir(
-#                     parents=True, exist_ok=True
-#                 )
-#                 summary.generated.append(output_path)
-#                 pretty_log(
-#                     "Overwriting "
-#                     if os.path.exists(output_path) and options["overwrite"]
-#                     else "Generating " + output_path
-#                 )
+def generate_templates(
+    templater_scheme: TemplaterScheme,
+    templater_options: TemplaterOptions,
+    specs: List[Spec],
+) -> None:
+    pass
 
-#                 with open(output_path, "w") as f:
-#                     f.write(output)
 
-#         for callback in spec.callbacks:
-#             if summary.skipped:
-#                 pretty_log(
-#                     f"Skipping {callback.name} - Didn't generate entire spec\n{callback.call}"
-#                 )
-
-#             elif options["no_callbacks"]:
-#                 pretty_log(
-#                     f"Skipping {callback.name} - Callbacks skipped\n{callback.call}"
-#                 )
-
-#             else:
-#                 pretty_log(f"Running {callback.name}\n{callback.call}")
-#                 callback(output_dir)
-
-#         generated, skipped = "\n".join(summary.generated), "\n".join(summary.skipped)
-#         pretty_log(
-#             f"Summary - {spec.name}:\nGenerated: {generated}\nSkipped: {skipped}"
-#         )
+def load_yaml(yaml_path: str) -> Any:
+    with open(yaml_path, "r") as stream:
+        return ruamel.yaml.load(stream, Loader=ruamel.yaml.Loader)

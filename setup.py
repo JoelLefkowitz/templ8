@@ -9,6 +9,7 @@ if __name__ == "__main__":
             "docopts",
             "jinja2",
             "emoji",
+            "walkmate",
             "yummy_cereal",
         ],
         extras_require={

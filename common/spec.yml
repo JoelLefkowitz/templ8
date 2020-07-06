@@ -1,12 +1,12 @@
 name: common
 
-required_config:
-  - name
-  - version: 0.1.0
-  - description
-  - author
-  - private: False
-  - readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
+required_context:
+  name:
+  version: 0.1.0
+  description:
+  author:
+  private: False
+  readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
 
 callbacks:
-  - echo: echo hello
+  echo: echo hello

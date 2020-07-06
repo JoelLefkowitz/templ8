@@ -13,5 +13,4 @@ path_replacements:
   - backend: <backend_name>
 
 callbacks:
-  - django: django-admin startproject  <backend_name> <backend_name>
-
+  - django: django-admin startproject <backend_name> <backend_name>
