@@ -7,6 +7,3 @@ required_context:
   author:
   private: False
   readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
-
-callbacks:
-  echo: echo hello

@@ -1,0 +1,5 @@
+name: platforms
+
+extends:
+  - frontend
+  - backend

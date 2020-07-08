@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 
 
 class InvalidCommand(Exception):
@@ -22,5 +22,17 @@ class ConfigTypeError(Exception):
 
 
 class MissingContext(Exception):
-    def __init__(self, context: str, config: Dict) -> None:
-        super().__init__(f"Missing context: {context}\nNot found in config: {config}")
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Missing contextprovided: {name}")
+
+
+class FailedContextLookup(Exception):
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Failed to lookup the context value for: {name}")
+
+
+class MissingSpecDependecy(Exception):
+    def __init__(self, dependencies, specs) -> None:
+        super().__init__(
+            f"Failed to find all spec dependencies:\nSpec: {spec}\nDependencies: {dependencies}\nSpecs: {specs}"
+        )

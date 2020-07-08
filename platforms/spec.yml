@@ -1,8 +1,0 @@
-name: deploy
-
-required_context:
-  deploy_url: 
-
-required_context_extends:
-  - frontend
-  - bakend

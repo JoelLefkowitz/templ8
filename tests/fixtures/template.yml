@@ -1,2 +1,16 @@
-a: 3
-b: 4
+package: True
+
+name: test
+version: 0.1.0
+description: test project
+author: Joel
+private: False
+readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
+package_name: test
+author_email: joel@hotmail.com
+author_github: joel@hotmail.com
+github_url: guthub.com/joel/test
+twine_username: joel
+console_scripts: []
+install_requires: []
+extra_requirements: []

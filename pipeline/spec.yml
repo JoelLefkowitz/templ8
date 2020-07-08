@@ -1,3 +1,0 @@
-name: pipeline
-extends:
-  - common

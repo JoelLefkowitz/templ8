@@ -1,12 +1,18 @@
 import os
 import sys
-from docopt import docopt, DocoptExit  # type: ignore
-from inspect import cleandoc
-from typing import List
-from dataclasses import dataclass
-from cli import docopts_cli, TemplaterOptions, TemplaterScheme
-from exceptions import InvalidOutputDir, InvalidCommand, InvalidConfigPath
-from generator import collect_context, collect_specs, plan_templates, generate_templates
+
+from cli import docopts_cli
+from docopt import DocoptExit, docopt  # type: ignore
+from exceptions import (
+    ConfigTypeError,
+    InvalidCommand,
+    InvalidConfigPath,
+    InvalidOutputDir,
+)
+from models.context import Context
+from models.generator import Generator
+from models.spec import Spec
+from models.templater import TemplaterOptions, TemplaterScheme
 
 
 def entrypoint() -> None:
@@ -38,14 +44,13 @@ def entrypoint() -> None:
     )
 
     # TODO Ensure this is correct when packaging
-    core_templates_root = os.path.abspath(os.path.join( __file__, "../../"))
+    core_templates_root = os.path.abspath(os.path.join(__file__, "../../"))
     templater_scheme.template_dirs.append(core_templates_root)
 
-    context = collect_context(templater_scheme)
-    specs = collect_specs(templater_scheme, context)
-    plan_templates(templater_scheme, templater_options, specs)
-    generate_templates(templater_scheme, templater_options, specs)
-
+    context = Context.collect_context(templater_scheme)
+    specs = Spec.collect_specs(templater_scheme, context)
+    generators = [Generator.from_spec(context, spec) for spec in specs]
+    x = 1
 
 if __name__ == "__main__":
     entrypoint()

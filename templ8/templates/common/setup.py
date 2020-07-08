@@ -1,8 +1,7 @@
 from setuptools import setup
 
-
 console_scripts = {{console_scripts}}
-install_requires = ["django"] + {{install_requires}}
+install_requires = {{install_requires}}
 extras_require = {
     "dist": ["wheel", "twine", "bump2version"],
     "docs": [
