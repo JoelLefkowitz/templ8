@@ -16,11 +16,6 @@ class InvalidOutputDir(Exception):
         super().__init__(f"Invalid output directory: {path}")
 
 
-class ConfigTypeError(Exception):
-    def __init__(self) -> None:
-        super().__init__(f"Config must be a single depth dictionary")
-
-
 class MissingContext(Exception):
     def __init__(self, name: str) -> None:
         super().__init__(f"Missing contextprovided: {name}")
@@ -32,7 +27,7 @@ class FailedContextLookup(Exception):
 
 
 class MissingSpecDependecy(Exception):
-    def __init__(self, dependencies, specs) -> None:
+    def __init__(self, name, extends, specs) -> None:
         super().__init__(
-            f"Failed to find all spec dependencies:\nSpec: {spec}\nDependencies: {dependencies}\nSpecs: {specs}"
+            f"Failed to find all spec dependencies:\nSpec: {name}\Extends: {', '.join(extends)} \nSpecs: {specs}"
         )

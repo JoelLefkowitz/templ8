@@ -1,4 +1,5 @@
 package: True
+frontend: True
 
 name: test
 version: 0.1.0
@@ -14,3 +15,4 @@ twine_username: joel
 console_scripts: []
 install_requires: []
 extra_requirements: []
+frontend_name: test_front

@@ -2,8 +2,9 @@ import datetime
 import os
 import re
 
-import pypandoc
 from pyimport import path_guard
+
+import pypandoc
 
 path_guard("../..")
 

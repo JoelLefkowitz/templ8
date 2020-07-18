@@ -1,8 +1,6 @@
-from typing import Any, Callable, List
+from typing import Any, List
 
 
-def unique_by_key(
-    item_list: List[Any], key_function: Callable[[Any], Any]
-) -> List[Any]:
-    unique_dict = {key_function(i): i for i in item_list}
+def unique_by_name(item_list: List[Any]) -> List[Any]:
+    unique_dict = {i.name: i for i in item_list}
     return list(unique_dict.values())

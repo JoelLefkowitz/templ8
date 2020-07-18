@@ -9,6 +9,8 @@ if __name__ == "__main__":
             "docopts",
             "jinja2",
             "emoji",
+            "art",
+            "toposort",
             "walkmate",
             "yummy_cereal",
         ],

@@ -1,56 +1,84 @@
 import os
-import sys
+from distutils.util import strtobool
 
-from cli import docopts_cli
-from docopt import DocoptExit, docopt  # type: ignore
-from exceptions import (
-    ConfigTypeError,
-    InvalidCommand,
-    InvalidConfigPath,
-    InvalidOutputDir,
-)
-from models.context import Context
-from models.generator import Generator
-from models.spec import Spec
-from models.templater import TemplaterOptions, TemplaterScheme
+from art import text2art
+
+from cli import parse_cli
+from templater.options import TemplaterOptions
+from templater.scheme import TemplaterScheme
+from utils.files import write_file
 
 
 def entrypoint() -> None:
+    templater_scheme, templater_options = parse_cli()
+    generate_and_report(templater_scheme, templater_options, plan_mode=True)
+
+    if templater_options.silent or templater_options.assume_yes or prompt_check():
+        generate_and_report(templater_scheme, templater_options, plan_mode=False)
+
+
+def prompt_check() -> bool:
     try:
-        cli_arguments = docopt(docopts_cli)
-    except DocoptExit:
-        raise InvalidCommand(sys.argv[1:], cli)
+        return strtobool(input("Would you like to continue? "))
+    except ValueError:
+        return False
 
-    config_path = cli_arguments["<config_path>"]
-    if not os.path.exists(config_path) or os.path.isdir(config_path):
-        raise InvalidConfigPath(config_path)
 
-    output_dir = cli_arguments["<output_dir>"] or os.path.dirname(config_path)
-    if os.path.isfile(output_dir):
-        raise InvalidOutputDir(output_dir)
+def generate_and_report(
+    templater_scheme: TemplaterScheme,
+    templater_options: TemplaterOptions,
+    plan_mode: bool,
+) -> None:
 
-    templater_options = TemplaterOptions(
-        cli_arguments["--overwrite"],
-        cli_arguments["--dry-run"],
-        cli_arguments["--skip-callbacks"],
-    )
+    if not templater_options.silent:
+        print(text2art("Generating" if not plan_mode else "Plan"))
 
-    templater_scheme = TemplaterScheme(
-        config_path,
-        output_dir,
-        cli_arguments["<template_dirs>"],
-        cli_arguments["<specified_files>"],
-        options=templater_options,
-    )
+    for templater_spec in templater_scheme.templater_specs:
+        for template in templater_spec.templates:
 
-    # TODO Ensure this is correct when packaging
-    core_templates_root = os.path.abspath(os.path.join(__file__, "../../"))
-    templater_scheme.template_dirs.append(core_templates_root)
+            include_file = (
+                not templater_scheme.specified_files
+                or template.name in templater_options.specified_files
+            )
 
-    context = Context.collect_context(templater_scheme)
-    specs = Spec.collect_specs(templater_scheme, context)
-    generators = [Generator.from_spec(context, spec) for spec in specs]
-    x = 1
+            output_path = os.path.join(
+                templater_scheme.output_dir, template.rel_output_path
+            )
+
+            path_motion = f"{template.rel_output_path} -> {output_path}"
+
+            if include_file and not os.path.exists(output_path):
+                step_msg = f"{'Generate' if plan_mode else 'Generating'}: {template.name} ({path_motion})"
+
+            elif include_file and templater_options.overwrite:
+                step_msg = f"{'Overwrite' if plan_mode else 'Overwritting'}: {template.name} ({path_motion})"
+
+            else:
+                continue
+
+            if not templater_options.silent:
+                print(step_msg)
+
+            if not plan_mode:
+                write_file(
+                    template.resolve(templater_spec.context),
+                    output_path,
+                )
+                
+        if not templater_options.skip_callbacks:
+            for callback in templater_spec.callbacks:
+
+                if not templater_options.silent:
+                    print(
+                        f"{'Run' if plan_mode else 'Running'}: {callback.name} ({callback.call})"
+                    )
+
+                if not plan_mode:
+                    callback(
+                        cwd=templater_scheme.output_dir,
+                        capture_output=not templater_options.silent,
+                    )
+
 
 if __name__ == "__main__":
     entrypoint()
