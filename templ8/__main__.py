@@ -9,6 +9,7 @@ from templater.scheme import TemplaterScheme
 from utils.files import write_file
 
 
+
 def entrypoint() -> None:
     templater_scheme, templater_options = parse_cli()
     generate_and_report(templater_scheme, templater_options, plan_mode=True)
@@ -60,11 +61,8 @@ def generate_and_report(
                 print(step_msg)
 
             if not plan_mode:
-                write_file(
-                    template.resolve(templater_spec.context),
-                    output_path,
-                )
-                
+                write_file(template.render(templater_scheme.context), output_path)
+
         if not templater_options.skip_callbacks:
             for callback in templater_spec.callbacks:
 

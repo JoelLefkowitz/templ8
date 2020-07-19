@@ -17,4 +17,6 @@ def write_file(string: str, output_path: str) -> None:
 
 
 def contains_cache_dir(file_path: str) -> bool:
-    return any(cache_dir in file_path for cache_dir in ["__pycache__", ".DS_Store", ".coverage"])
+    return not set(os.path.normpath(file_path).split(os.path.sep)).isdisjoint(
+        {"__pycache__", ".DS_Store", ".coverage"}
+    )

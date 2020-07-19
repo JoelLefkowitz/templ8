@@ -25,6 +25,9 @@ class Template:
     rel_output_path: str
     raw_template: JinjaTemplate
 
+    def render(self, context: List[Context]) -> str:
+        return self.raw_template.render({i.name: i.value for i in context})
+
 
 @dataclass
 class RawTemplaterSpec:
@@ -123,8 +126,8 @@ class TemplaterSpec:
 
     @property
     def templates(self) -> Iterator[Template]:
-        loader = Environment(
-            loader=FileSystemLoader(self.root_path),
+        env = Environment(
+            loader=FileSystemLoader(self.root_path, encoding="utf-8"),
             trim_blocks=True,
             lstrip_blocks=True,
             keep_trailing_newline=True,
@@ -133,14 +136,21 @@ class TemplaterSpec:
 
         for file_path in get_child_files(self.root_path):
 
-            if contains_cache_dir(file_path):
+            template_path = os.path.relpath(file_path, self.root_path)
+
+            if (
+                contains_cache_dir(file_path)
+                or os.path.basename(template_path) == "spec.yml"
+            ):
                 continue
 
-            # TODO Add path replacements
-            template_path = os.path.relpath(file_path, self.root_path)
+            rel_output_path = template_path
+
+            for path_replacement in self.path_replacements:
+                rel_output_path = path_replacement.replace_in_path(rel_output_path)
 
             yield Template(
                 name=os.path.basename(template_path),
-                rel_output_path=template_path,
-                raw_template=loader.get_template(template_path),
+                rel_output_path=rel_output_path,
+                raw_template=env.get_template(template_path),
             )
