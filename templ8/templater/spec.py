@@ -1,7 +1,5 @@
 import os
 from dataclasses import dataclass, field
-from exceptions import MissingSpecDependecy
-from functools import reduce
 from typing import Iterator, List, TypeVar
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -9,11 +7,12 @@ from jinja2 import Template as JinjaTemplate
 from toposort import toposort_flatten
 from walkmate import get_child_files
 
-from templater.callback import Callback
-from templater.context import Context
-from templater.path_replacement import PathReplacement
-from utils.filter import unique_by_name
-from utils.files import contains_cache_dir
+from ..exceptions import MissingSpecDependecy
+from ..utils.files import contains_cache_dir
+from ..utils.filter import unique_by_name
+from .callback import Callback
+from .context import Context
+from .path_replacement import PathReplacement
 
 T = TypeVar("T", bound="TemplaterSpec")
 U = TypeVar("U", bound="RawTemplaterSpec")
@@ -26,6 +25,7 @@ class Template:
     raw_template: JinjaTemplate
 
     def render(self, context: List[Context]) -> str:
+        x = {i.name: i.value for i in context}
         return self.raw_template.render({i.name: i.value for i in context})
 
 
@@ -85,21 +85,17 @@ class TemplaterSpec:
                 is True
             ):
 
-                dependencies = raw_templater_spec.filter_dependencies(
-                    raw_templater_specs
+                required_context = Context.combine_lists(
+                    [
+                        dependency.required_context
+                        for dependency in raw_templater_spec.filter_dependencies(
+                            raw_templater_specs, include_self=True
+                        )
+                    ]
                 )
 
-                required_context = (
-                    reduce(
-                        lambda x, y: Context.combine_lists(x, y),
-                        [dependency.required_context for dependency in dependencies],
-                    )
-                    if dependencies
-                    else []
-                )
-
-                given_context = Context.combine_lists(
-                    required_context, context, add_new=False
+                scoped_context = Context.fill_list(
+                    old_list=required_context, new_list=context
                 )
 
                 resolved_path_replacements = [
@@ -115,7 +111,7 @@ class TemplaterSpec:
                 templater_spec = cls(
                     name=raw_templater_spec.name,
                     root_path=raw_templater_spec.root_path,
-                    context=given_context,
+                    context=scoped_context,
                     path_replacements=resolved_path_replacements,
                     callbacks=resolved_callbacks,
                 )

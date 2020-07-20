@@ -1,7 +1,8 @@
+import os
 from dataclasses import dataclass
 from typing import List, TypeVar
-import os
-from templater.context import Context
+
+from .context import Context
 
 T = TypeVar("T", bound="PathReplacement")
 

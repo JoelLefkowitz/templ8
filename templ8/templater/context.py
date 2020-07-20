@@ -1,9 +1,10 @@
 import re
 from dataclasses import dataclass
-from exceptions import FailedContextLookup
+from functools import reduce
 from typing import Any, Dict, List, TypeVar
 
-from utils.tags import untag
+from ..exceptions import FailedContextLookup
+from ..utils.tags import untag
 
 T = TypeVar("T", bound="Context")
 
@@ -24,23 +25,6 @@ class Context:
             else:
                 raise FailedContextLookup(name)
 
-    @staticmethod
-    def combine_lists(
-        old_context: List[T], new_context: List[T], add_new: bool = True
-    ) -> List[T]:
-
-        combined_context = old_context.copy()
-        for context in new_context:
-            try:
-                match = next(i for i in old_context if i.name == context.name)
-                match.value = context.value if context.value else match.value
-
-            except StopIteration:
-                if add_new:
-                    combined_context.append(context)
-
-        return combined_context
-
     @classmethod
     def from_dict(cls, dct: Dict) -> List[T]:
         return [cls(name=k, value=v or None) for k, v in dct.items()]
@@ -50,3 +34,25 @@ class Context:
         return re.sub(
             r"<\w+>", lambda x: str(cls.lookup(untag(x.group()), context)), string
         )
+
+    @staticmethod
+    def combine_lists(context_lists: List[List[T]]) -> List[T]:
+        return list(
+            reduce(
+                lambda x, y: Context.fill_list(x, y, add_new=True), context_lists, []
+            )
+        )
+
+    @staticmethod
+    def fill_list(old_list: List[T], new_list: List[T], add_new=False) -> List[T]:
+        combined_list = old_list.copy()
+        for context in new_list:
+            try:
+                match = next(i for i in old_list if i.name == context.name)
+                match.value = context.value if context.value else match.value
+
+            except StopIteration:
+                if add_new:
+                    combined_list.append(context)
+
+        return combined_list

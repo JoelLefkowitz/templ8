@@ -2,7 +2,7 @@ import subprocess
 from dataclasses import dataclass
 from typing import List, TypeVar
 
-from templater.context import Context
+from .context import Context
 
 T = TypeVar("T", bound="Callback")
 

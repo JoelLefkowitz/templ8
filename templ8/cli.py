@@ -1,14 +1,14 @@
 import os
 import sys
-from exceptions import InvalidCommand, InvalidConfigPath, InvalidOutputDir
 from inspect import cleandoc
 from typing import Tuple
 
 from docopt import DocoptExit  # type: ignore
 from docopt import docopt
 
-from templater.options import TemplaterOptions
-from templater.scheme import TemplaterScheme
+from .exceptions import InvalidCommand, InvalidConfigPath, InvalidOutputDir
+from .templater.options import TemplaterOptions
+from .templater.scheme import TemplaterScheme
 
 docopts_cli = cleandoc(
     """

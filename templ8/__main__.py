@@ -3,11 +3,10 @@ from distutils.util import strtobool
 
 from art import text2art
 
-from cli import parse_cli
-from templater.options import TemplaterOptions
-from templater.scheme import TemplaterScheme
-from utils.files import write_file
-
+from .cli import parse_cli
+from .templater.options import TemplaterOptions
+from .templater.scheme import TemplaterScheme
+from .utils.files import write_file
 
 
 def entrypoint() -> None:
@@ -32,7 +31,13 @@ def generate_and_report(
 ) -> None:
 
     if not templater_options.silent:
-        print(text2art("Generating" if not plan_mode else "Plan"))
+        print(
+            text2art("Templ8", font="rnd-medium") + "Plan:"
+            if plan_mode
+            else text2art("Generating", font="rnd-small")
+        )
+
+    generated_paths = []
 
     for templater_spec in templater_scheme.templater_specs:
         for template in templater_spec.templates:
@@ -42,17 +47,21 @@ def generate_and_report(
                 or template.name in templater_options.specified_files
             )
 
-            output_path = os.path.join(
-                templater_scheme.output_dir, template.rel_output_path
+            output_path = os.path.normpath(
+                os.path.join(templater_scheme.output_dir, template.rel_output_path)
             )
 
-            path_motion = f"{template.rel_output_path} -> {output_path}"
+            path_motion = (
+                f"{os.path.normpath(template.rel_output_path)} -> {output_path}"
+            )
 
-            if include_file and not os.path.exists(output_path):
-                step_msg = f"{'Generate' if plan_mode else 'Generating'}: {template.name} ({path_motion})"
-
-            elif include_file and templater_options.overwrite:
+            if include_file and templater_options.overwrite:
                 step_msg = f"{'Overwrite' if plan_mode else 'Overwritting'}: {template.name} ({path_motion})"
+
+            elif include_file and (
+                not os.path.exists(output_path) or output_path in generated_paths
+            ):
+                step_msg = f"{'Generate' if plan_mode else 'Generating'}: {template.name} ({path_motion})"
 
             else:
                 continue
@@ -61,7 +70,8 @@ def generate_and_report(
                 print(step_msg)
 
             if not plan_mode:
-                write_file(template.render(templater_scheme.context), output_path)
+                generated_paths.append(output_path)
+                write_file(template.render(templater_spec.context), output_path)
 
         if not templater_options.skip_callbacks:
             for callback in templater_spec.callbacks:

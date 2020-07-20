@@ -2,14 +2,15 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from walkmate import get_child_files
 from yummy_cereal import AnnotationsParser, ValidatedParser
 
-from templater.callback import Callback
-from templater.context import Context
-from templater.path_replacement import PathReplacement
-from templater.spec import RawTemplaterSpec, TemplaterSpec
-from utils.files import load_yaml
+from walkmate import get_child_files
+
+from ..utils.files import load_yaml
+from .callback import Callback
+from .context import Context
+from .path_replacement import PathReplacement
+from .spec import RawTemplaterSpec, TemplaterSpec
 
 
 @dataclass

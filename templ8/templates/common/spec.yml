@@ -5,5 +5,6 @@ required_context:
   version: 0.1.0
   description:
   author:
+  author_github:
   private: False
-  readme: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
+  readme_body: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"

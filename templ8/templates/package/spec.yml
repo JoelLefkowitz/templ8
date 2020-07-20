@@ -1,0 +1,20 @@
+name: package
+
+extends: 
+  - common
+
+required_context: 
+  package_name:
+  author_email:
+  author_github:
+  github_url:
+  twine_username:
+  console_scripts: []
+  install_requires: []
+  extra_requirements: []
+
+path_replacements:
+  src: <package_name>
+
+callbacks:
+   venv: python3 -m venv venv
