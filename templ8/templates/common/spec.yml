@@ -8,3 +8,7 @@ required_context:
   author_github:
   private: False
   readme_body: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
+
+callbacks:
+  create_repo: curl -u 'USER' https://api.github.com/user/repos -d '{"name":"REPO"}'
+  add_remote: git remote add origin git@github.com:alexpchin/<reponame>.git

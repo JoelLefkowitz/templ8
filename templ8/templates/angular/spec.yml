@@ -1,0 +1,11 @@
+name: angular
+
+required_context:
+  angular_name:
+
+extends:
+  - common
+
+callbacks:
+  yarn: ng config -g cli.packageManager yarn
+  angular-start: ng new --routing=true --style=scss <angular_name> --directory <angular_name>

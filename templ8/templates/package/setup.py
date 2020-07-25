@@ -2,12 +2,8 @@ from setuptools import setup
 
 if __name__ == "__main__":
     setup(
-        install_requires=[
-            "dataclasses",
-            "ruamel.yaml",
-            "typing_extensions",
-            "typing_inspect",
-        ],
+        install_requires={{install_requires}},
+        console_scripts={{console_scripts}},
         extras_require={
             "dist": ["wheel", "twine", "bump2version"],
             "docs": [

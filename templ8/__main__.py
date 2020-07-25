@@ -1,3 +1,16 @@
+# TODO Dont say overwriting if nfile doesnt exist
+# TODO List specs that match
+# TODO Specify skipped files
+# TODO Break into functions
+# TODO Dependencies are not being included
+# TODO Dont allow none values unless --allow-none set
+# TODO Add to readmes readthedocs may need to be configured
+# TODO Add to readmes gitflow use
+# TODO Add to readmes use of statuses to test pull requests
+# TODO Add to readmes buildbot use
+# TODO Add to readmes available manual jobs
+
+
 import os
 from distutils.util import strtobool
 
@@ -32,9 +45,9 @@ def generate_and_report(
 
     if not templater_options.silent:
         print(
-            text2art("Templ8", font="rnd-medium") + "Plan:"
+            text2art("Templ8", font="cybermedium") + "Plan:"
             if plan_mode
-            else text2art("Generating", font="rnd-small")
+            else text2art("Generating", font="cybermedium")
         )
 
     generated_paths = []

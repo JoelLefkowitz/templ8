@@ -1,0 +1,10 @@
+name: django
+
+required_context:
+  django_name:
+
+extends:
+  - common
+
+callbacks:
+  django-start: django-admin startproject <django_name> <django_name>

@@ -6,15 +6,18 @@ extends:
 required_context: 
   package_name:
   author_email:
-  author_github:
-  github_url:
   twine_username:
+  python_version: 3.6
+  keywords: []
   console_scripts: []
   install_requires: []
-  extra_requirements: []
-
+  
 path_replacements:
   src: <package_name>
 
+# TODO Debug these callbacks
 callbacks:
-   venv: python3 -m venv venv
+   create_venv: python3 -m venv venv
+   add_docs_webhook: 'curl -vX POST github.com/repos/<author_github>/<name>/hooks -d ci/webhooks/docs_hook.json --header "Content-Type: application/json"'
+   add_tests_webhook: 'curl -vX POST github.com/repos/<author_github>/<name>/hooks -d ci/webhooks/tests_hook.json --header "Content-Type: application/json"' 
+   add_release_webhook: 'curl -vX POST github.com/repos/<author_github>/<name>/hooks -d ci/webhooks/release_hook.json --header "Content-Type: application/json"' 

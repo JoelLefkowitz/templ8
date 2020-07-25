@@ -1,17 +1,25 @@
-common: True
-name: Test
-description: Test description
-version: 0.2.0
-author: Joel Lefkowitz
-author_github: joellefkowitz
-private: False
-readme_body: "Test readme"
-
 package: True
-package_name:
+django: True
+angular: True
+
+name:
+version: 0.1.0
+description:
+
+author:
 author_email:
-github_url:
+author_github:
+
+private: False
+readme_body: ":purple_heart: Under costruction - This is a pre-release :purple_heart:"
+
+package_name: my_package
+angular_name: my_front
+django_name: my_back
+
 twine_username:
+python_version: 3.6
+keywords: []
+
 console_scripts: []
-install_requires: []
-extra_requirements: []
+install_requires: ["django", "numpy"]
