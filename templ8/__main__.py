@@ -1,14 +1,11 @@
-# TODO Dont say overwriting if nfile doesnt exist
-# TODO List specs that match
-# TODO Specify skipped files
-# TODO Break into functions
 # TODO Dependencies are not being included
 # TODO Dont allow none values unless --allow-none set
+
 # TODO Add to readmes readthedocs may need to be configured
 # TODO Add to readmes gitflow use
-# TODO Add to readmes use of statuses to test pull requests
-# TODO Add to readmes buildbot use
-# TODO Add to readmes available manual jobs
+# TODO Add to readmes use of statuses to test pull requests
+# TODO Add to readmes buildbot use
+# TODO Add to readmes available manual jobs
 
 
 import os
@@ -19,7 +16,10 @@ from art import text2art
 from .cli import parse_cli
 from .templater.options import TemplaterOptions
 from .templater.scheme import TemplaterScheme
+from .templater.callback import Callback
+from .templater.spec import Template, TemplaterSpec
 from .utils.files import write_file
+from typing import List
 
 
 def entrypoint() -> None:
@@ -44,61 +44,128 @@ def generate_and_report(
 ) -> None:
 
     if not templater_options.silent:
-        print(
-            text2art("Templ8", font="cybermedium") + "Plan:"
-            if plan_mode
-            else text2art("Generating", font="cybermedium")
-        )
+        report_heading(plan_mode)
 
-    generated_paths = []
+    accepted_paths = []  # type: List[str]
 
     for templater_spec in templater_scheme.templater_specs:
-        for template in templater_spec.templates:
 
-            include_file = (
-                not templater_scheme.specified_files
-                or template.name in templater_options.specified_files
-            )
+        if not templater_options.silent:
+            report_spec(templater_spec, plan_mode)
 
-            output_path = os.path.normpath(
-                os.path.join(templater_scheme.output_dir, template.rel_output_path)
-            )
+        generate_templates(
+            templater_scheme,
+            templater_options,
+            templater_spec,
+            accepted_paths,
+            plan_mode,
+        )
 
-            path_motion = (
-                f"{os.path.normpath(template.rel_output_path)} -> {output_path}"
-            )
-
-            if include_file and templater_options.overwrite:
-                step_msg = f"{'Overwrite' if plan_mode else 'Overwritting'}: {template.name} ({path_motion})"
-
-            elif include_file and (
-                not os.path.exists(output_path) or output_path in generated_paths
-            ):
-                step_msg = f"{'Generate' if plan_mode else 'Generating'}: {template.name} ({path_motion})"
-
-            else:
-                continue
-
-            if not templater_options.silent:
-                print(step_msg)
-
-            if not plan_mode:
-                generated_paths.append(output_path)
-                write_file(template.render(templater_spec.context), output_path)
+        report_tally(accepted_paths)
 
         if not templater_options.skip_callbacks:
-            for callback in templater_spec.callbacks:
+            run_callbacks(
+                templater_scheme, templater_options, templater_spec, plan_mode
+            )
 
-                if not templater_options.silent:
-                    print(
-                        f"{'Run' if plan_mode else 'Running'}: {callback.name} ({callback.call})"
-                    )
 
-                if not plan_mode:
-                    callback(
-                        cwd=templater_scheme.output_dir,
-                        capture_output=not templater_options.silent,
-                    )
+def generate_templates(
+    templater_scheme: TemplaterScheme,
+    templater_options: TemplaterOptions,
+    templater_spec: TemplaterSpec,
+    accepted_paths: List[str],
+    plan_mode: bool,
+):
+    for template in templater_spec.templates:
+
+        include_file = (
+            not templater_scheme.specified_files
+            or template.name in templater_options.specified_files
+        )
+
+        output_path = os.path.normpath(
+            os.path.join(templater_scheme.output_dir, template.rel_output_path)
+        )
+
+        if include_file and not os.path.exists(output_path):
+            status = "new"
+
+        elif (
+            include_file
+            and os.path.exists(output_path)
+            and output_path in accepted_paths
+        ):
+            status = "rewrite"
+
+        elif (
+            include_file and os.path.exists(output_path) and templater_options.overwrite
+        ):
+            status = "overwrite"
+
+        else:
+            continue
+
+        accepted_paths.append(output_path)
+
+        if not templater_options.silent:
+            report_template(template, output_path, status, plan_mode)
+
+        if not plan_mode:
+            write_file(template.render(templater_spec.context), output_path)
+
+
+def run_callbacks(
+    templater_scheme: TemplaterScheme,
+    templater_options: TemplaterOptions,
+    templater_spec: TemplaterSpec,
+    plan_mode: bool,
+):
+    for callback in templater_spec.callbacks:
+
+        if not templater_options.silent:
+            report_callback(callback, plan_mode)
+
+        if not plan_mode:
+            callback(
+                cwd=templater_scheme.output_dir,
+                capture_output=not templater_options.silent,
+            )
+
+
+def report_heading(plan_mode: bool) -> None:
+    if plan_mode:
+        print(text2art("Templ8") + "Plan:")
+    else:
+        print(text2art("Generating", font="cybermedium"))
+
+
+def report_spec(templater_spec: TemplaterSpec, plan_mode: bool) -> None:
+    if plan_mode:
+        print(f"Spec plan: {templater_spec.name} ({templater_spec.root_path})")
+    else:
+        print(f"Spec: {templater_spec.name} ({templater_spec.root_path})")
+
+
+def report_template(
+    template: Template, output_path: str, status: str, plan_mode: bool
+) -> None:
+    path_motion = f"{os.path.normpath(template.rel_output_path)} -> {output_path}"
+
+    if plan_mode:
+        print(f"Generate: ({status}) {path_motion}")
+    else:
+        print(f"Generating: ({status}) {path_motion}")
+
+
+def report_tally(accepted_paths: List[str]) -> None: 
+        print(f"Total: {len(accepted_paths)} template(s)\n")
+
+
+def report_callback(callback: Callback, plan_mode: bool) -> None:
+    if plan_mode:
+        print(f"Run: {callback.name} ({callback.call})")
+    else:
+        print(f"Running: {callback.name} ({callback.call})")
 
 
 if __name__ == "__main__":
