@@ -58,6 +58,21 @@ class RawTemplaterSpec:
         return unique_by_name(recursive_depenencies)
 
     @staticmethod
+    def filter_dependencies_by_context(
+        specs: List[U], context: List[Context]
+    ) -> List[U]:
+        return unique_by_name(
+            [
+                individual_spec
+                for spec in specs
+                for individual_spec in spec.filter_dependencies(
+                    specs, include_self=True
+                )
+                if Context.lookup(spec.name, context, fail_softly=True) is True
+            ]
+        )
+
+    @staticmethod
     def topographical_sort(specs: List[U]) -> List[U]:
         topsorted = toposort_flatten({spec.name: {*spec.extends} for spec in specs})
         return sorted(specs, key=lambda spec: topsorted.index(spec.name))
@@ -78,45 +93,41 @@ class TemplaterSpec:
 
         templater_specs = []
 
-        for raw_templater_spec in raw_templater_specs:
-
-            if (
-                Context.lookup(raw_templater_spec.name, context, fail_softly=True)
-                is True
-            ):
-
-                required_context = Context.combine_lists(
-                    [
-                        dependency.required_context
-                        for dependency in raw_templater_spec.filter_dependencies(
-                            raw_templater_specs, include_self=True
-                        )
-                    ]
-                )
-
-                scoped_context = Context.fill_list(
-                    old_list=required_context, new_list=context
-                )
-
-                resolved_path_replacements = [
-                    PathReplacement.insert_context(path_replacement, context)
-                    for path_replacement in raw_templater_spec.path_replacements
+        for raw_templater_spec in RawTemplaterSpec.filter_dependencies_by_context(
+            raw_templater_specs, context
+        ):
+            required_context = Context.combine_lists(
+                [
+                    dependency.required_context
+                    for dependency in raw_templater_spec.filter_dependencies(
+                        raw_templater_specs, include_self=True
+                    )
                 ]
+            )
 
-                resolved_callbacks = [
-                    Callback.insert_context(callback, context)
-                    for callback in raw_templater_spec.callbacks
-                ]
+            scoped_context = Context.fill_list(
+                old_list=required_context, new_list=context
+            )
 
-                templater_spec = cls(
-                    name=raw_templater_spec.name,
-                    root_path=raw_templater_spec.root_path,
-                    context=scoped_context,
-                    path_replacements=resolved_path_replacements,
-                    callbacks=resolved_callbacks,
-                )
+            resolved_path_replacements = [
+                PathReplacement.insert_context(path_replacement, context)
+                for path_replacement in raw_templater_spec.path_replacements
+            ]
 
-                templater_specs.append(templater_spec)
+            resolved_callbacks = [
+                Callback.insert_context(callback, context)
+                for callback in raw_templater_spec.callbacks
+            ]
+
+            templater_spec = cls(
+                name=raw_templater_spec.name,
+                root_path=raw_templater_spec.root_path,
+                context=scoped_context,
+                path_replacements=resolved_path_replacements,
+                callbacks=resolved_callbacks,
+            )
+
+            templater_specs.append(templater_spec)
 
         return templater_specs
 

@@ -2,9 +2,8 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from yummy_cereal import AnnotationsParser, ValidatedParser
-
 from walkmate import get_child_files
+from yummy_cereal import AnnotationsParser, ValidatedParser
 
 from ..utils.files import load_yaml
 from .callback import Callback

@@ -1,25 +1,15 @@
-# TODO Dependencies are not being included
-# TODO Dont allow none values unless --allow-none set
-
-# TODO Add to readmes readthedocs may need to be configured
-# TODO Add to readmes gitflow use
-# TODO Add to readmes use of statuses to test pull requests
-# TODO Add to readmes buildbot use
-# TODO Add to readmes available manual jobs
-
-
 import os
 from distutils.util import strtobool
+from typing import List
 
 from art import text2art
 
 from .cli import parse_cli
+from .templater.callback import Callback
 from .templater.options import TemplaterOptions
 from .templater.scheme import TemplaterScheme
-from .templater.callback import Callback
 from .templater.spec import Template, TemplaterSpec
 from .utils.files import write_file
-from typing import List
 
 
 def entrypoint() -> None:
@@ -140,10 +130,11 @@ def report_heading(plan_mode: bool) -> None:
 
 
 def report_spec(templater_spec: TemplaterSpec, plan_mode: bool) -> None:
+    spec_path = os.path.relpath(templater_spec.root_path, os.getcwd())
     if plan_mode:
-        print(f"Spec plan: {templater_spec.name} ({templater_spec.root_path})")
+        print(f"Spec plan: {templater_spec.name} ({spec_path})")
     else:
-        print(f"Spec: {templater_spec.name} ({templater_spec.root_path})")
+        print(f"Spec: {templater_spec.name} ({spec_path})")
 
 
 def report_template(
@@ -157,8 +148,8 @@ def report_template(
         print(f"Generating: ({status}) {path_motion}")
 
 
-def report_tally(accepted_paths: List[str]) -> None: 
-        print(f"Total: {len(accepted_paths)} template(s)\n")
+def report_tally(accepted_paths: List[str]) -> None:
+    print(f"Running total: {len(accepted_paths)} template(s)\n")
 
 
 def report_callback(callback: Callback, plan_mode: bool) -> None:

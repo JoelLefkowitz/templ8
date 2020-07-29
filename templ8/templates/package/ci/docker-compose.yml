@@ -1,0 +1,23 @@
+version: '2'
+services:
+  buildbot-master:
+    image: buildbot/buildbot-master:master
+    env_file:
+      - db.env
+      - master.env
+    depends_on:
+      - db
+    ports:
+      - "8010:8010"
+
+  buildbot-worker:
+    image: "buildbot/buildbot-worker:master"
+    env_file:
+      - worker.env
+    depends_on:
+      - buildbot-master
+      
+  db:
+    image: "postgres:9.4"
+    env_file:
+      - db.env
