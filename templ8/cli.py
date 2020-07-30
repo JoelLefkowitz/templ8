@@ -44,7 +44,7 @@ def parse_cli() -> Tuple[TemplaterOptions, TemplaterScheme]:
 
     template_dirs = [
         *cli_arguments["<template_dirs>"],
-        os.path.abspath(os.path.join(__file__, "../../")),
+        os.path.abspath(os.path.join(__file__, "../templates")),
     ]
 
     templater_scheme = TemplaterScheme(

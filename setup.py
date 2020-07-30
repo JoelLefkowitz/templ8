@@ -2,6 +2,7 @@ from setuptools import setup
 
 if __name__ == "__main__":
     setup(
+        entry_points={"console_scripts": ["templ8 = templ8.__main__:entrypoint"]},
         install_requires=[
             "dataclasses",
             "pyimport",
