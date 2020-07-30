@@ -62,6 +62,19 @@ multi-job tests
 
 Additionally, an html report will be saved to the local directory.
 
+### Buildbot
+
+To run the buildbot server:
+
+```bash
+cd ci
+docker-compose up -d
+```
+
+* Builders are configured in master.cfg.
+* Build masters read their configuration from https://github.com/{{author_github}}/{{name}}/{{package_name}}/ci/master.cfg
+* Worker and database passwords are configured as environment variables
+
 ### Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.

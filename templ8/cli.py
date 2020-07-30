@@ -38,7 +38,7 @@ def parse_cli() -> Tuple[TemplaterOptions, TemplaterScheme]:
     if not os.path.exists(config_path) or os.path.isdir(config_path):
         raise InvalidConfigPath(config_path)
 
-    output_dir = cli_arguments["<output_dir>"] or os.path.dirname(config_path)
+    output_dir = cli_arguments["<output_dir>"] or os.path.normpath(os.path.dirname(config_path))
     if os.path.isfile(output_dir):
         raise InvalidOutputDir(output_dir)
 
