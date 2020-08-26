@@ -27,6 +27,9 @@ docopts_cli = cleandoc(
     """
 )
 
+# TODO Make callbacks default to skip
+# TODO List callbacks in plan
+
 
 def parse_cli() -> Tuple[TemplaterOptions, TemplaterScheme]:
     try:

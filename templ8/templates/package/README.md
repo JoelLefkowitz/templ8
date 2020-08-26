@@ -1,7 +1,10 @@
+# TODO Update from github_syncer
+
 # {{name}}
 
 {{description}}
 {% if not private %}
+
 ### Status
 
 | Source     | Shields                                                        |
