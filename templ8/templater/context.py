@@ -1,7 +1,10 @@
 import re
 from dataclasses import dataclass
 from functools import reduce
-from typing import Any, Dict, List, TypeVar
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import TypeVar
 
 from ..exceptions import FailedContextLookup
 from ..utils.tags import untag

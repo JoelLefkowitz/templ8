@@ -8,7 +8,8 @@ from .cli import parse_cli
 from .templater.callback import Callback
 from .templater.options import TemplaterOptions
 from .templater.scheme import TemplaterScheme
-from .templater.spec import Template, TemplaterSpec
+from .templater.spec import Template
+from .templater.spec import TemplaterSpec
 from .utils.files import write_file
 
 
