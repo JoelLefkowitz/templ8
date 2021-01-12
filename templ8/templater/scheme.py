@@ -3,13 +3,15 @@ from dataclasses import dataclass
 from typing import List
 
 from walkmate import get_child_files
-from yummy_cereal import AnnotationsParser, ValidatedParser
+from yummy_cereal import AnnotationsParser
+from yummy_cereal import ValidatedParser
 
 from ..utils.files import load_yaml
 from .callback import Callback
 from .context import Context
 from .path_replacement import PathReplacement
-from .spec import RawTemplaterSpec, TemplaterSpec
+from .spec import RawTemplaterSpec
+from .spec import TemplaterSpec
 
 
 @dataclass

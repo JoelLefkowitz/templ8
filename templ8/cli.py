@@ -6,7 +6,9 @@ from typing import Tuple
 from docopt import DocoptExit  # type: ignore
 from docopt import docopt
 
-from .exceptions import InvalidCommand, InvalidConfigPath, InvalidOutputDir
+from .exceptions import InvalidCommand
+from .exceptions import InvalidConfigPath
+from .exceptions import InvalidOutputDir
 from .templater.options import TemplaterOptions
 from .templater.scheme import TemplaterScheme
 
@@ -26,6 +28,9 @@ docopts_cli = cleandoc(
       --skip-callbacks  Don't run callbacks
     """
 )
+
+# TODO Make callbacks default to skip
+# TODO List callbacks in plan
 
 
 def parse_cli() -> Tuple[TemplaterOptions, TemplaterScheme]:

@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
-from typing import List, TypeVar
+from typing import List
+from typing import TypeVar
 
 from .context import Context
 

@@ -1,0 +1,7 @@
+{
+    "python.linting.mypyEnabled": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "venv/bin/python",
+    "python.languageServer": "Jedi",
+    "python.formatting.provider": "black",
+}

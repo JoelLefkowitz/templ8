@@ -1,4 +1,5 @@
-from typing import Any, List
+from typing import Any
+from typing import List
 
 
 def unique_by_name(item_list: List[Any]) -> List[Any]:

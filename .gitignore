@@ -102,3 +102,4 @@ venv/
 wheels/
 yarn-error.log
 
+templ8/templates/package/ci/state.sqlite
